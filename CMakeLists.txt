@@ -1,35 +1,9 @@
 cmake_minimum_required(VERSION 3.1)
 project(Queues)
 set(CMAKE_CXX_STANDARD 11)
-# include(FindSoil.cmake)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D_GLIBCXX_USE_CXX11_ABI=0")
 
-#########################################################
-# Fix fedoras fucked up libs
-#########################################################
-# set(CMAKE_LIBRARY_PATH ${CMAKE_LIBRARY_PATH} /usr/lib64)
+add_subdirectory (src)
 
-
-#########################################################
-# Include Files
-#########################################################
-file(GLOB queues_src
-    src/*.hpp
-    src/*.h
-    src/*.cpp
-)
-
-# file(GLOB queues_src
-    # src/Tree.h
-    # src/Tree.cpp
-    # src/main.cpp
-# )
-
-
-add_executable(asd ${queues_src})
-
-########################################################
-# Linking & stuff
-#########################################################
-
-# create the program "test"
-# target_link_libraries(asd ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} DevIL ILU ILUT)
+enable_testing ()
+add_subdirectory (test)
