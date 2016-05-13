@@ -21,10 +21,8 @@ class Insert : Message {
 
 class QueryPart : Message {
    public:
-      bool isMatch(Element element) {
-          return reference_point_.compare(element) == expected_;
-      }
-      Length getIdx();
+      Length getIdx() const;
+      bool isMatch(const Element& element) const;
       /* … */
    private:
        Length idx_; // element index in tuple
@@ -37,7 +35,7 @@ class Query : Message {
     public:
         typedef std::vector<QueryPart> QueryParts;
         /* … */
-        QueryParts getParts();
+        QueryParts getParts() const;
 
     private:
         int pid_;

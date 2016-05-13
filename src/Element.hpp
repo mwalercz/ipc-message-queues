@@ -11,14 +11,17 @@ class Element {
             kString
         };
         enum Comparison {
-            kNone, // jesli mamy sytuacje Query int:* 
             kLower,
             kLowerOrEqual,
             kEqual,
             kGreaterOrEqual,
             kGreater,
         };
-        Comparison compare(const Element& other);
+        Comparison compare(const Element& other) const;
+        Type getType() const;
+        int* getInt() const;
+        float* getFloat() const;
+        std::string* getString() const;
     private:
         Type type_;
         int* int_value_;

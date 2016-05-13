@@ -1,5 +1,13 @@
 #include "Server.hpp"
 
+Server::Server() {
+    //FIXME
+}
+
+Server::~Server() {
+    //FIXME
+}
+
 // FIXME
 void Server::serve() {
     /* while (1) {
@@ -37,4 +45,3 @@ void Server::serve() {
         }
     } */
 }
-
