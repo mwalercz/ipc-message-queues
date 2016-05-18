@@ -1,5 +1,9 @@
 #include "Tuple.hpp"
 
+Tuple::Tuple(Elements elements) : elements_(elements) {
+    type_ = calculateType(elements);
+}
+
 bool Tuple::isMatch(const Query& query) const {
     Query::QueryParts parts = query.getParts();
     for (auto p : parts) {
@@ -9,4 +13,31 @@ bool Tuple::isMatch(const Query& query) const {
         }
     }
     return true;
+}
+
+Tuple::Type Tuple::calculateType(const Elements& elements) const {
+    if (elements.size() > 32) {
+        //FIXME
+        // throw up;
+    }
+    Type types = 0;
+    for (auto element : elements) {
+        switch (element.getType()) {
+            case Element::Type::Int:
+                types |= 1;
+                break;
+            case Element::Type::Float:
+                types |= 2;
+                break;
+            case Element::Type::String:
+                types |= 3;
+                break;
+            default:
+                //FIXME
+                // throw up;
+                break;
+        }
+        types <<= 2;
+    }
+    return types;
 }

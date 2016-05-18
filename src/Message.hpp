@@ -4,22 +4,39 @@
 #include <vector>
 #include <map>
 #include <ctime>
+#include <set>
 
 typedef int Length;
 typedef long Types;
 typedef std::map<std::pair<Length, Types>, Elements> Storage;
 typedef time_t Time;
 typedef double TimeDuration;
+typedef unsigned MsgPid;
 
 class Message { // abstract class
     // virtual ~Message() = delete;
+    public:
+        enum Type {
+            Query,
+            Output,
+            Invalid,
+        };
+        bool isExpired() const;
+        MsgPid getPid() const;
+        Type getType() const;
+
+    private:
+        MsgPid pid_;
+        Time send_time_;
+        TimeDuration timeout_;
+        Type type_;
 };
 
-class Insert : Message {
+class Output : public Message {
 /* … */
 };
 
-class QueryPart : Message {
+class QueryPart : public Message {
    public:
       Length getIdx() const;
       bool isMatch(const Element& element) const;
@@ -31,18 +48,28 @@ class QueryPart : Message {
       /* … */
 };
 
-class Query : Message {
+class Query : public Message {
     public:
         typedef std::vector<QueryPart> QueryParts;
+        Query();
+        explicit Query(bool r);
         /* … */
         QueryParts getParts() const;
+        bool isReadOnly() const;
 
     private:
-        int pid_;
-        Time send_time_;
-        TimeDuration timeout_;
         QueryParts parts_;
+        bool read_only_;
         /* … */
+};
+
+class MessageSet {
+    public:
+        MessageSet();
+        virtual ~MessageSet();
+
+    private:
+        std::set<Message> message_set_;
 };
 
 #endif /* ifndef MESSAGE_HPP */

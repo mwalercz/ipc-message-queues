@@ -1,5 +1,14 @@
 #include "Message.hpp"
 
+
+Query::Query() : read_only_(true) {}
+Query::Query(bool r) : read_only_(r) {}
+
+bool Query::isReadOnly() const {
+    return read_only_;
+}
+
+
 Length QueryPart::getIdx() const {
     return idx_;
 }

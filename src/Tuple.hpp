@@ -6,11 +6,24 @@
 
 class Tuple {
     public:
-        Tuple(long type, Elements elements) : type_(type), elements_(elements) {};
+        typedef long Type;
+        Tuple();
+        explicit Tuple(Elements elements);
         bool isMatch(const Query& other) const;
     private:
-        long type_;
+        Type type_;
         Elements elements_;
+        Type calculateType(const Elements& elements) const;
+};
+
+class TupleMap {
+    public:
+        void remove(Query query);
+        Tuple find(Query query);
+    private:
+        std::map<Tuple::Type, Tuple> tuples_;
+        // last iterator maybe ?
+
 };
 
 #endif /* ifndef TUPLE_HPP */

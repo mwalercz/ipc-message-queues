@@ -6,26 +6,26 @@ Element::Comparison Element::compare(const Element& other) const {
         throw std::domain_error("Can't compare elements with different types");
     }
     switch(type_) {
-        case kInt: {
+        case Int: {
             int a = *int_value_;
             int b = *other.getInt();
-            if (a == b) return kEqual;
-            if (a < b) return kLower;
-            return kGreater;
+            if (a == b) return Equal;
+            if (a < b) return Lower;
+            return Greater;
         }
-        case kFloat: {
+        case Float: {
             float a = *int_value_;
             float b = *other.getFloat();
-            if (a == b) return kEqual;
-            if (a < b) return kLower;
-            return kGreater;
+            if (a == b) return Equal;
+            if (a < b) return Lower;
+            return Greater;
         }
-        case kString: {
+        case String: {
             std::string a = *string_value_;
             std::string b = *other.getString();
-            if (a == b) return kEqual;
-            if (a < b) return kLower;
-            return kGreater;
+            if (a == b) return Equal;
+            if (a < b) return Lower;
+            return Greater;
         }
     }
 }

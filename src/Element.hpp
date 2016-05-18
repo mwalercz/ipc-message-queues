@@ -6,16 +6,16 @@
 class Element {
     public:
         enum Type {
-            kInt,
-            kFloat,
-            kString
+            Int,
+            Float,
+            String
         };
         enum Comparison {
-            kLower,
-            kLowerOrEqual,
-            kEqual,
-            kGreaterOrEqual,
-            kGreater,
+            Lower,
+            LowerOrEqual,
+            Equal,
+            GreaterOrEqual,
+            Greater,
         };
         Comparison compare(const Element& other) const;
         Type getType() const;

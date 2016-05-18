@@ -11,37 +11,83 @@ Server::~Server() {
 // FIXME
 void Server::serve() {
     /* while (1) {
-        pending_queries.removeTimedoutQueries();//i.a. sends wakeup msgs to authors
-        timeout = pending_queries.getNextTimeout();//shortest timeout in pending queries
-        msg_part = channel_in.recv(timeout); // block if nothing in the channel
-        if (!msg_part) { // woke up by timer
+        pending_queries_.removeTimedoutQueries();  // i.a. sends wakeup msgs to authors
+        timeout = pending_queries_.getNextTimeout();  // shortest timeout in pending queries
+        msg_part = queue_in_.recv(timeout);  // block if nothing in the queue
+        if (!msg_part) {  // woke up by timer
             continue;
         }
+        //FIXME
         process_msg_part(msg_part);
         if (any_msg_complete()) {
-            parsed_msg = parse(getCompletedMessage());
-            if (Now() - parsed_msg.getSendTime() > parsed_msg.getTimeout()) {
-                channel_out.send_wakeup_msg(parsed_msg.getPid());
-            } else if (parsed_msg.type == query) {
-                result = find(parsed_msg);
-                if ( result != null ) {
-                    if (parsed_msg.type.rd != query_read_only) {
-                        remove(parsed_msg);
+            UnqPtr<Message> parsed_msg = parser_.parse(getCompletedMessage());
+            if (parsed_msg.isExpired()) {
+                queue_out_.sendWakeupMsg(parsed_msg.getPid());
+            }
+            switch (parsed_msg->getType()) {
+                case Message::Type::Query: {
+                        UnqPtr<Query> query = cast_non_poly<Query, Message>(std::move(parsed_msg));
+                        handleQuery(*query);
+                        break;
                     }
-                    channel_out.send(parsed_msg.getPid(), result);
-                }
-                else {
-                    add_to_pending_queries(parsed_msg);
-                }
-            } else {  //parsed_msg.type == insert
-                // remove timed out queries and try to match pending query
-                found = iter_over_pending_queries(parsed_msg);
-                if found {
-                    channel_out.send(parsed_msg);
-                } else {
-                    insert(parsed_msg);
-                }
+                case Message::Type::Output: {
+                        UnqPtr<Output> output = cast_non_poly<Output, Message>(std::move(parsed_msg));
+                        handleOutput(*output);
+                        break;
+                    }
+                case Message::Type::Invalid: {
+                        // TODO
+                        // panic ?
+                        break;
+                    }
+                default:
+                    break;
             }
         }
     } */
 }
+
+void Server::handleQuery(Query query) {
+    Tuple result;
+    try {
+        result = tuples_.find(query);
+    }
+    catch (...) { // FIXME
+        addToPendingQueries(query);
+        return;
+    }
+    if (query.isReadOnly()) {
+        tuples_.remove(query);
+    }
+    // FIXME
+    // queue_out_.send(query.getPid(), result);
+}
+
+void Server::handleOutput(Output output) {
+    // //FIXME
+    // //remove timed out queries and try to match pending query
+    // found = iter_over_pending_queries(insert);
+    // if(found){
+        // queue_out_.send(parsed_msg);
+    // }
+    // else {
+        // output(parsed_msg);
+    // }
+}
+
+template <typename T, typename S>
+UnqPtr<T> cast_poly(UnqPtr<S> basePointer) {
+    T *tmp = dynamic_cast<T*>(basePointer.get());
+    UnqPtr<T> derivedPointer;
+    if(tmp != nullptr) {
+        basePointer.release();
+        derivedPointer.reset(tmp);
+    }
+}
+
+template <typename T, typename S>
+inline UnqPtr<T> cast_non_poly(UnqPtr<S> basePointer) {
+    UnqPtr<T> derived(static_cast<T*>(basePointer.release()));
+    return derived;
+}
+
