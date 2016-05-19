@@ -20,10 +20,12 @@ public:
 private:
     Scanner d_scanner;
 
+    std::unique_ptr<Message> result;
+
     void switchStreams(std::istream &in, std::ostream &out);
 
     int parse();
-    
+
     void error(char const *msg);
 
     int lex();

@@ -20,11 +20,18 @@
 %%
 message:
     query
+    {
+        result(new Query)
+    }
     | tuple
+    {
+        result(new Tuple)
+    }
 ;
 
 query:
     query_head parts
+
 ;
 
 query_head:
@@ -50,6 +57,7 @@ part:
 
 integer_val:
     number
+
 ;
 
 float_val:
