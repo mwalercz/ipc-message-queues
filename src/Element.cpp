@@ -1,6 +1,19 @@
 #include "Element.hpp"
 #include <stdexcept>
 
+Element::Element(int value)
+    : type_(Type::Int), int_value_(new int(value)) {}
+Element::Element(float value)
+    : type_(Type::Float), int_value_(new float(value)) {}
+Element::Element(const std::string& value)
+    : type_(Type::String), int_value_(new std::string(value)) {}
+
+Element::~Element() {
+    delete int_value_;
+    delete float_value_;
+    delete string_value_;
+}
+
 Element::Comparison Element::compare(const Element& other) const {
     if (other.getType() != this->type_) {
         throw std::domain_error("Can't compare elements with different types");

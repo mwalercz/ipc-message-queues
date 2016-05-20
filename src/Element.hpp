@@ -18,6 +18,10 @@ class Element {
             kGreaterOrEqual,
             kGreater,
         };
+        Element(int value);
+        Element(float value);
+        Element(const std::string& value);
+        ~Element();
         Comparison compare(const Element& other) const;
         Type getType() const;
         int* getInt() const;
