@@ -24,7 +24,7 @@ class MessageVisitor {
 
 class Message { // abstract class
     public:
-        virtual ~Message() = 0;
+        virtual ~Message() {};
         virtual void accept(MessageVisitor& v) = 0;
 
         bool isExpired() const;
@@ -43,7 +43,7 @@ class Output : public Message {
         Output(const Tuple& tuple);
         virtual ~Output() = default;
         virtual void accept(MessageVisitor& v);
-        Tuple getTuple();
+        Tuple getTuple() const;
     private:
         Tuple tuple_;
 };

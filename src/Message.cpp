@@ -8,7 +8,7 @@ Output::Output(const Tuple& tuple) : tuple_(tuple) {}
 void Output::accept(MessageVisitor& v) {
 }
 
-Tuple Output::getTuple(const Tuple& tuple) {
+Tuple Output::getTuple() const{
     return tuple_;
 }
 
