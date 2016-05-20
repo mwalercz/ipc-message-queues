@@ -1,9 +1,12 @@
 #ifndef TUPLE_HPP
 #define TUPLE_HPP
-#include "Message.hpp"
-#include "Element.hpp"
-#include <vector>
 
+#include <vector>
+#include <map>
+
+#include "Element.hpp"
+
+class Query;
 class Tuple {
     public:
         typedef long Type;
@@ -20,6 +23,7 @@ class TupleMap {
     public:
         void remove(const Query& query);
         Tuple find(const Query& query);
+        Tuple fetch(const Query& query);
     private:
         std::map<Tuple::Type, Tuple> tuples_;
         // last iterator maybe ?

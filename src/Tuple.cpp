@@ -1,5 +1,8 @@
 #include "Tuple.hpp"
 
+#include <stdexcept>
+#include <string>
+
 Tuple::Tuple(Elements elements) : elements_(elements) {
     type_ = calculateType(elements);
 }
@@ -17,8 +20,8 @@ bool Tuple::isMatch(const Query& query) const {
 
 Tuple::Type Tuple::calculateType(const Elements& elements) const {
     if (elements.size() > 32) {
-        //FIXME
-        // throw up;
+        throw std::domain_error("Element size must be lower or equal 32. (" +
+                                std::to_string(elements.size()) + ")");
     }
     Type types = 0;
     for (auto element : elements) {

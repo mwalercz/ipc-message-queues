@@ -1,9 +1,11 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
-#include "Tuple.hpp"
-#include "Message.hpp"
+
 #include <memory>
 
+#include "Element.hpp"
+#include "Tuple.hpp"
+#include "Message.hpp"
 // TODO
 // * Queue class
 // * storing unfinished messages
@@ -12,13 +14,16 @@
 template <typename T>
 using UnqPtr = std::unique_ptr<T>;
 
-class Server {
+class Server : MessageVisitor {
 public:
     Server();
     virtual ~Server();
+    virtual void visit(Output& output);
+    virtual void visit(Query& query);
+
     void serve();
 private:
-    Message getCompletedMessage();
+    UnqPtr<Message> getCompletedMessage();
     void handleQuery(const Query& query);
     void handleOutput(const Output& output);
     void addToPendingQueries(const Query& query);

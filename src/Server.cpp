@@ -1,5 +1,11 @@
 #include "Server.hpp"
 
+#include <map>
+#include <memory>
+
+#include "Element.hpp"
+#include "Message.hpp"
+
 Server::Server() {
     //FIXME
 }
@@ -24,40 +30,30 @@ void Server::serve() {
             if (parsed_msg.isExpired()) {
                 queue_out_.sendWakeupMsg(parsed_msg.getPid());
             }
-            switch (parsed_msg->getType()) {
-                case Message::Type::Query: {
-                        UnqPtr<Query> query = cast_non_poly<Query, Message>(std::move(parsed_msg));
-                        handleQuery(*query);
-                        break;
-                    }
-                case Message::Type::Output: {
-                        UnqPtr<Output> output = cast_non_poly<Output, Message>(std::move(parsed_msg));
-                        handleOutput(*output);
-                        break;
-                    }
-                case Message::Type::Invalid: {
-                        // TODO
-                        // panic ?
-                        break;
-                    }
-                default:
-                    break;
-            }
+            parser_msg.accept(*this);
         }
     } */
+}
+
+void Server::visit(Output& output) {
+    handleOutput(output);
+}
+
+void Server::visit(Query& query) {
+    handleQuery(query);
 }
 
 void Server::handleQuery(const Query& query) {
     Tuple result;
     try {
-        result = tuples_.find(query);
-    }
-    catch (...) { // FIXME
+        if (query.isReadOnly()) {
+            result = tuples_.find(query);
+        } else {
+            result = tuples_.fetch(query);
+        }
+    } catch (...) { // FIXME
         addToPendingQueries(query);
         return;
-    }
-    if (query.isReadOnly()) {
-        tuples_.remove(query);
     }
     // FIXME
     // queue_out_.send(query.getPid(), result);
