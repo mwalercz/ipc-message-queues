@@ -1,5 +1,6 @@
 #ifndef ELEMENT_HPP
 #define ELEMENT_HPP value
+
 #include <string>
 #include <vector>
 
@@ -11,11 +12,11 @@ class Element {
             String
         };
         enum Comparison {
-            Lower,
-            LowerOrEqual,
-            Equal,
-            GreaterOrEqual,
-            Greater,
+            kLower,
+            kLowerOrEqual,
+            kEqual,
+            kGreaterOrEqual,
+            kGreater,
         };
         Comparison compare(const Element& other) const;
         Type getType() const;
@@ -30,4 +31,5 @@ class Element {
 };
 
 typedef std::vector<Element> Elements;
-#endif /* ifndef ELEMENT_HPP */
+
+#endif /* ELEMENT_HPP */

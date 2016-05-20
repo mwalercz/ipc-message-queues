@@ -47,7 +47,7 @@ void Server::serve() {
     } */
 }
 
-void Server::handleQuery(Query query) {
+void Server::handleQuery(const Query& query) {
     Tuple result;
     try {
         result = tuples_.find(query);
@@ -63,7 +63,7 @@ void Server::handleQuery(Query query) {
     // queue_out_.send(query.getPid(), result);
 }
 
-void Server::handleOutput(Output output) {
+void Server::handleOutput(const Output& output) {
     // //FIXME
     // //remove timed out queries and try to match pending query
     // found = iter_over_pending_queries(insert);

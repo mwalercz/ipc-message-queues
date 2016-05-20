@@ -18,12 +18,12 @@ class Tuple {
 
 class TupleMap {
     public:
-        void remove(Query query);
-        Tuple find(Query query);
+        void remove(const Query& query);
+        Tuple find(const Query& query);
     private:
         std::map<Tuple::Type, Tuple> tuples_;
         // last iterator maybe ?
 
 };
 
-#endif /* ifndef TUPLE_HPP */
+#endif /* TUPLE_HPP */

@@ -1,6 +1,8 @@
 #ifndef MESSAGE_HPP
 #define MESSAGE_HPP
+
 #include "Element.hpp"
+
 #include <vector>
 #include <map>
 #include <ctime>
@@ -8,19 +10,20 @@
 
 typedef int Length;
 typedef long Types;
-typedef std::map<std::pair<Length, Types>, Elements> Storage;
 typedef time_t Time;
 typedef double TimeDuration;
 typedef unsigned MsgPid;
 
 class Message { // abstract class
-    // virtual ~Message() = delete;
     public:
         enum Type {
-            Query,
-            Output,
-            Invalid,
+            kQuery,
+            kOutput,
+            kInvalid,
         };
+
+        virtual ~Message() = 0;
+
         bool isExpired() const;
         MsgPid getPid() const;
         Type getType() const;
@@ -72,4 +75,4 @@ class MessageSet {
         std::set<Message> message_set_;
 };
 
-#endif /* ifndef MESSAGE_HPP */
+#endif /* MESSAGE_HPP */

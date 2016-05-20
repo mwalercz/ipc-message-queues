@@ -19,9 +19,9 @@ public:
     void serve();
 private:
     Message getCompletedMessage();
-    void handleQuery(Query query);
-    void handleOutput(Output output);
-    void addToPendingQueries(Query query);
+    void handleQuery(const Query& query);
+    void handleOutput(const Output& output);
+    void addToPendingQueries(const Query& query);
 
 
     // FIXME
