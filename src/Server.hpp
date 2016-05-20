@@ -6,6 +6,7 @@
 #include "Element.hpp"
 #include "Tuple.hpp"
 #include "Message.hpp"
+#include "PendingQueries.hpp"
 // TODO
 // * Queue class
 // * storing unfinished messages
@@ -34,6 +35,7 @@ private:
     // Queue queue_out_;
     // Queue queue_in_;
     TupleMap tuples_;
+    PendingQueries pending_queries_;
 
 };
 

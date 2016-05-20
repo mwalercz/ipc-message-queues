@@ -30,6 +30,10 @@ class Message { // abstract class
         bool isExpired() const;
         MsgPid getPid() const;
         Tuple::Type getType() const;
+        Time getEstimatedTimeout() const;
+        TimeDuration getLeftTimeout() const;
+        bool compareTimes(Time l, Time r) const;
+        friend bool operator<(const Message& lhs, const Message& rhs);
 
     private:
         MsgPid pid_;

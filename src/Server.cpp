@@ -52,7 +52,7 @@ void Server::handleQuery(const Query& query) {
             result = tuples_.fetch(query);
         }
     } catch (...) { // FIXME
-        addToPendingQueries(query);
+        pending_queries_.add(query);
         return;
     }
     // FIXME

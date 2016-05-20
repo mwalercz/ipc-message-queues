@@ -5,6 +5,7 @@ add_library(QueuesServ
             Element.cpp Element.hpp
             Tuple.cpp Tuple.hpp
             Message.cpp Message.hpp
+            PendingQueries.cpp PendingQueries.hpp
            )
 add_executable(asd main.cpp)
 target_link_libraries(asd QueuesServ)
