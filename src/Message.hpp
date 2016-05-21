@@ -24,12 +24,16 @@ class MessageVisitor {
 
 class Message { // abstract class
     public:
-        virtual ~Message() = 0;
+        virtual ~Message() {};
         virtual void accept(MessageVisitor& v) = 0;
 
         bool isExpired() const;
         MsgPid getPid() const;
         Tuple::Type getType() const;
+        Time getEstimatedTimeout() const;
+        TimeDuration getLeftTimeout() const;
+        bool compareTimes(Time l, Time r) const;
+        friend bool operator<(const Message& lhs, const Message& rhs);
 
     private:
         MsgPid pid_;
@@ -43,7 +47,7 @@ class Output : public Message {
         Output(const Tuple& tuple);
         virtual ~Output() = default;
         virtual void accept(MessageVisitor& v);
-        Tuple getTuple();
+        Tuple getTuple() const;
     private:
         Tuple tuple_;
 };

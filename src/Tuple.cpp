@@ -1,4 +1,5 @@
 #include "Tuple.hpp"
+#include "Message.hpp"
 
 #include <stdexcept>
 #include <string>
@@ -6,6 +7,8 @@
 Tuple::Tuple(Elements elements) : elements_(elements) {
     type_ = calculateType(elements);
 }
+
+Tuple::Tuple() {}
 
 bool Tuple::isMatch(const Query& query) const {
     Query::QueryParts parts = query.getParts();

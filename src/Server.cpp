@@ -27,10 +27,10 @@ void Server::serve() {
         process_msg_part(msg_part);
         if (any_msg_complete()) {
             UnqPtr<Message> parsed_msg = parser_.parse(getCompletedMessage());
-            if (parsed_msg.isExpired()) {
-                queue_out_.sendWakeupMsg(parsed_msg.getPid());
+            if (parsed_msg->isExpired()) {
+                queue_out_.sendWakeupMsg(parsed_msg->getPid());
             }
-            parser_msg.accept(*this);
+            parsed_msg->accept(*this);
         }
     } */
 }
@@ -52,7 +52,7 @@ void Server::handleQuery(const Query& query) {
             result = tuples_.fetch(query);
         }
     } catch (...) { // FIXME
-        addToPendingQueries(query);
+        pending_queries_.add(query);
         return;
     }
     // FIXME
@@ -86,4 +86,3 @@ inline UnqPtr<T> cast_non_poly(UnqPtr<S> basePointer) {
     UnqPtr<T> derived(static_cast<T*>(basePointer.release()));
     return derived;
 }
-

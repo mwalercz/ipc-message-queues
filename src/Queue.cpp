@@ -36,6 +36,10 @@ void Queue::send(pid_t pid, const std::string &str) {
   //Send body
   MsgBody msg;
   msg.mtype = pid;
+  char buf[size+sizeof(long)];
+
+  msg = (MsgBody*)buf;
+
   std::strcpy(msg.body, str.c_str());
 
   msgsnd(msqid,&msg,str.size()+1,0);
