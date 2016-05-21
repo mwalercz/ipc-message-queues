@@ -21,7 +21,7 @@ bool Tuple::isMatch(const Query& query) const {
     return true;
 }
 
-Tuple::Type Tuple::calculateType(const Elements& elements) const {
+Tuple::Type Tuple::calculateType(const Elements& elements) {
     if (elements.size() > 32) {
         throw std::domain_error("Element size must be lower or equal 32. (" +
                                 std::to_string(elements.size()) + ")");
@@ -45,5 +45,6 @@ Tuple::Type Tuple::calculateType(const Elements& elements) const {
         }
         types <<= 2;
     }
+    types >>= 2;
     return types;
 }

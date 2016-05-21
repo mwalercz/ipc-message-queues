@@ -24,14 +24,22 @@ bool Query::isReadOnly() const {
     return read_only_;
 }
 
-
-Length QueryPart::getIdx() const {
-    return idx_;
+void Query::appendPart(const QueryPart& q) {
+    parts_.push_back(q);
 }
 
 Query::QueryParts Query::getParts() const {
     return parts_;
 }
+
+QueryPart::QueryPart(Length idx, const Element& reference_point,
+    Element::Comparison expected) : idx_(idx),
+    reference_point_(reference_point), expected_(expected) {}
+
+Length QueryPart::getIdx() const {
+    return idx_;
+}
+
 
 bool QueryPart::isMatch(const Element& element) const {
     return reference_point_.compare(element) == expected_;

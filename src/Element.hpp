@@ -21,13 +21,16 @@ class Element {
         Element(int value);
         Element(float value);
         Element(const std::string& value);
+        Element(const Element& other);
         ~Element();
+        Element& operator=(const Element& other);
         Comparison compare(const Element& other) const;
         Type getType() const;
         int* getInt() const;
         float* getFloat() const;
         std::string* getString() const;
     private:
+        void swap(const Element& other);
         Type type_;
         int* int_value_;
         float* float_value_;

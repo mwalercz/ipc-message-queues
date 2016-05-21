@@ -14,9 +14,9 @@ class Tuple {
         explicit Tuple(Elements elements);
         bool isMatch(const Query& other) const;
     private:
+        static Type calculateType(const Elements& elements);
         Type type_;
         Elements elements_;
-        Type calculateType(const Elements& elements) const;
 };
 
 class TupleMap {

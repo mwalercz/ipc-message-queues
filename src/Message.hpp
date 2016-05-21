@@ -72,7 +72,7 @@ class Query : public Message {
         explicit Query(bool r);
         virtual ~Query() = default;
         virtual void accept(MessageVisitor& v);
-
+        void appendPart(const QueryPart& q);
         QueryParts getParts() const;
         bool isReadOnly() const;
 

@@ -1,5 +1,6 @@
 #include "Element.hpp"
 #include <stdexcept>
+#include <iostream>
 
 Element::Element(int value) :
     type_(Type::Int), int_value_(new int(value)),
@@ -13,10 +14,43 @@ Element::Element(const std::string& value) :
     type_(Type::String), int_value_(nullptr),
     float_value_(nullptr), string_value_(new std::string(value)) {}
 
+void Element::swap(const Element& other) {
+    type_ = other.getType();
+    switch(other.getType()) {
+        case Int: {
+            int_value_ = new int(*other.getInt());
+            float_value_ = nullptr;
+            string_value_ = nullptr;
+            break;
+        }
+        case Float: {
+            int_value_ = nullptr;
+            float_value_ = new float(*other.getFloat());
+            string_value_ = nullptr;
+            break;
+        }
+        case String: {
+            int_value_ = nullptr;
+            float_value_ = nullptr;
+            string_value_ = new std::string(*other.getString());
+            break;
+        }
+    }
+}
+
+Element::Element(const Element& other) {
+    swap(other);
+}
+
 Element::~Element() {
     delete int_value_;
     delete float_value_;
     delete string_value_;
+}
+
+Element& Element::operator=(const Element& other) {
+    swap(other);
+    return *this;
 }
 
 Element::Comparison Element::compare(const Element& other) const {
