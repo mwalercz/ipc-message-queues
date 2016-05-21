@@ -9,8 +9,9 @@
 void Queue::init() {
   pid = getpid();
   int msgflg = IPC_CREAT | 0666;
-  if((msqid = msgget(key, msgflg)) < 0)
+  if((msqid = msgget(key, msgflg)) < 0) {
     throw std::runtime_error("Can't open queue");
+  }
 }
 
 void Queue::close() {
@@ -30,15 +31,15 @@ void Queue::sendHeader(pid_t pid, int size, int time, int timeout) {
 
 void Queue::send(pid_t pid, const std::string &str) {
   sendHeader(pid,
-	     str.size()+1, //null terminated string
-	     time(0),
-	     timeout);
+         str.size()+1, //null terminated string
+         time(0),
+         timeout);
   //Send body
   MsgBody msg;
   msg.mtype = pid;
-  char buf[size+sizeof(long)];
+  // char *buf = new char[str.size()+sizeof(long)];
 
-  msg = (MsgBody*)buf;
+  // msg.body = static_cast<char[]>(buf);
 
   std::strcpy(msg.body, str.c_str());
 
@@ -53,7 +54,7 @@ Queue::MsgHeader Queue::clientRcvHeader() {
 
 std::string Queue::clientRcvBody(int size) {
   MsgBody msg;
-  
+
   msgrcv(msqid,&msg,size,pid,0);
   std::string str(msg.body);
   return str;

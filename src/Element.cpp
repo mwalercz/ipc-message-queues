@@ -32,7 +32,7 @@ Element::Comparison Element::compare(const Element& other) const {
             return kGreater;
         }
         case Float: {
-            float a = *int_value_;
+            float a = *float_value_;
             float b = *other.getFloat();
             if (a == b) return kEqual;
             if (a < b) return kLower;
