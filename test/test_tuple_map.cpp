@@ -87,4 +87,50 @@ BOOST_AUTO_TEST_CASE( TestTupleMapFind )
     BOOST_CHECK(*tuple == tuples[2]);
 }
 
+BOOST_AUTO_TEST_CASE( TestTupleMapFetch )
+{
+    const std::vector<Tuple> tuples = {
+        Tuple({{"qwerty"}, {"xyz"}, {"asd"}}),
+        Tuple({{"a"}, {"b"}, {"c"}}),
+        Tuple({{1}, {1.0f}, {3.1459f}}),
+    };
+    TupleMap tmap;
+    for (auto tuple : tuples) {
+        tmap.insert(tuple);
+    }
+    Query q0(1, 1, 1, BOOST_BINARY_L(111111));
+    q0.appendPart(QueryPart(2, Element("baca"), Element::Comparison::kLower));
+    Query q1(1, 1, 1, BOOST_BINARY_L(111111));
+    q1.appendPart(QueryPart(1, Element("b"), Element::Comparison::kEqual));
+    q1.appendPart(QueryPart(0, Element("a"), Element::Comparison::kEqual));
+    Query q2(1, 1, 1, BOOST_BINARY_L(011010));
+    q2.appendPart(QueryPart(0, Element(1), Element::Comparison::kEqual));
+    q2.appendPart(QueryPart(1, Element(2.0f), Element::Comparison::kLower));
+    q2.appendPart(QueryPart(2, Element(2.0f), Element::Comparison::kGreater));
+
+    std::unique_ptr<Tuple> tuple = tmap.fetch(q0);
+    BOOST_REQUIRE(tuple != nullptr);
+    BOOST_CHECK(*tuple == tuples[0]);
+    //deleting result and checking again
+    tuple.release();
+    tuple = tmap.fetch(q0);
+    BOOST_CHECK(tuple == nullptr);
+
+    tuple = tmap.fetch(q1);
+    BOOST_REQUIRE(tuple != nullptr);
+    BOOST_CHECK(*tuple == tuples[1]);
+    //deleting result and checking again
+    tuple.release();
+    tuple = tmap.fetch(q1);
+    BOOST_CHECK(tuple == nullptr);
+
+    tuple = tmap.fetch(q2);
+    BOOST_REQUIRE(tuple != nullptr);
+    BOOST_CHECK(*tuple == tuples[2]);
+    //deleting result and checking again
+    tuple.release();
+    tuple = tmap.fetch(q2);
+    BOOST_CHECK(tuple == nullptr);
+}
+
 BOOST_AUTO_TEST_SUITE_END()

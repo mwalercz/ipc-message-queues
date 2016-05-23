@@ -1,7 +1,6 @@
 #include "Element.hpp"
 
 #include <stdexcept>
-#include <iostream>
 
 bool Element::fulfills(const Comparison lhs, const Comparison rhs) {
     // no 1s where 0s are
@@ -82,7 +81,6 @@ Element::Comparison Element::compare(const Element& other) const {
         case kString: {
             std::string a = *string_value_;
             std::string b = *other.getString();
-            std::cout << "a: " << a << " b: " << b << std::endl;
             if (a == b) return kEqual;
             if (a < b) return kLower;
             return kGreater;
