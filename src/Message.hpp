@@ -24,6 +24,8 @@ class MessageVisitor {
 
 class Message { // abstract class
     public:
+        Message(MsgPid pid, Time send_time, TimeDuration timeout,
+                Tuple::Type type);
         virtual ~Message() {};
         virtual void accept(MessageVisitor& v) = 0;
 
@@ -44,7 +46,8 @@ class Message { // abstract class
 
 class Output : public Message {
     public:
-        Output(const Tuple& tuple);
+        Output(const Tuple& tuple, MsgPid pid, Time send_time,
+               TimeDuration timeout);
         virtual ~Output() = default;
         virtual void accept(MessageVisitor& v);
         Tuple getTuple() const;
@@ -54,10 +57,11 @@ class Output : public Message {
 
 class QueryPart {
    public:
-    QueryPart(Length idx, const Element& reference_point,
-              Element::Comparison expected);
+      QueryPart(Length idx, const Element& reference_point,
+                Element::Comparison expected);
       Length getIdx() const;
       bool isMatch(const Element& element) const;
+
    private:
        Length idx_; // element index in tuple
        Element reference_point_;
@@ -68,8 +72,8 @@ class Query : public Message {
     public:
         typedef std::vector<QueryPart> QueryParts;
 
-        Query();
-        explicit Query(bool r);
+        Query(MsgPid pid, Time send_time, TimeDuration timeout,
+              Tuple::Type type, bool read_only = true);
         virtual ~Query() = default;
         virtual void accept(MessageVisitor& v);
         void appendPart(const QueryPart& q);
@@ -81,7 +85,7 @@ class Query : public Message {
         bool read_only_;
 };
 
-class MessageSet {
+class MessageSet { // FIXME remove?
     public:
         MessageSet();
         virtual ~MessageSet();

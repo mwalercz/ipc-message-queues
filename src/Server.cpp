@@ -44,14 +44,14 @@ void Server::visit(Query& query) {
 }
 
 void Server::handleQuery(const Query& query) {
-    Tuple result;
-    try {
-        if (query.isReadOnly()) {
-            result = tuples_.find(query);
-        } else {
-            result = tuples_.fetch(query);
-        }
-    } catch (...) { // FIXME
+    UnqPtr<Tuple> result;
+    if (query.isReadOnly()) {
+        result = tuples_.find(query);
+    } else {
+        result = tuples_.fetch(query);
+    }
+
+    if (!result) {
         pending_queries_.add(query);
         return;
     }

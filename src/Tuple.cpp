@@ -1,14 +1,14 @@
 #include "Tuple.hpp"
-#include "Message.hpp"
 
 #include <stdexcept>
 #include <string>
+#include <memory>
+
+#include "Message.hpp"
 
 Tuple::Tuple(Elements elements) : elements_(elements) {
     type_ = calculateType(elements);
 }
-
-Tuple::Tuple() {}
 
 bool Tuple::isMatch(const Query& query) const {
     Query::QueryParts parts = query.getParts();
@@ -21,6 +21,10 @@ bool Tuple::isMatch(const Query& query) const {
     return true;
 }
 
+Tuple::Type Tuple::getType() const {
+    return type_;
+}
+
 Tuple::Type Tuple::calculateType(const Elements& elements) {
     if (elements.size() > 32) {
         throw std::domain_error("Element size must be lower or equal 32. (" +
@@ -28,23 +32,28 @@ Tuple::Type Tuple::calculateType(const Elements& elements) {
     }
     Type types = 0;
     for (auto element : elements) {
+        types <<= 2;
         switch (element.getType()) {
-            case Element::Type::Int:
+            case Element::Type::kInt:
                 types |= 1;
                 break;
-            case Element::Type::Float:
+            case Element::Type::kFloat:
                 types |= 2;
                 break;
-            case Element::Type::String:
+            case Element::Type::kString:
                 types |= 3;
                 break;
-            default:
-                //FIXME
-                // throw up;
-                break;
         }
-        types <<= 2;
     }
-    types >>= 2;
     return types;
+}
+
+bool Tuple::operator==(const Tuple& other) const {
+    if (type_ != other.getType())
+        return false;
+    for (int i=0; i<elements_.size(); ++i) {
+        if (elements_[i] != other.elements_.at(i))
+            return false;
+    }
+    return true;
 }

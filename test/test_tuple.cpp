@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE( TestTupleIsMatch )
     es3.push_back(Element("x"));
     es3.push_back(Element("a"));
     Tuple t = Tuple(es3);
-    Query q;
+    Query q(0, 0, 0, t.getType());
     q.appendPart(QueryPart(0, Element("z"), Element::Comparison::kEqual));
     BOOST_CHECK(t.isMatch(q));
 }
@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE( TestTupleNoMatch )
     es3.push_back(Element("x"));
     es3.push_back(Element("a"));
     Tuple t = Tuple(es3);
-    Query q;
+    Query q(0, 0, 0, t.getType());
     q.appendPart(QueryPart(0, Element("x"), Element::Comparison::kEqual));
     BOOST_CHECK(!t.isMatch(q));
 }

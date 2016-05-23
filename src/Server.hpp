@@ -4,9 +4,10 @@
 #include <memory>
 
 #include "Element.hpp"
-#include "Tuple.hpp"
+#include "TupleMap.hpp"
 #include "Message.hpp"
 #include "PendingQueries.hpp"
+
 // TODO
 // * Queue class
 // * storing unfinished messages

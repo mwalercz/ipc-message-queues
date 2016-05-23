@@ -9,6 +9,7 @@ add_library(QueuesServ
             Server.cpp Server.hpp
             Element.cpp Element.hpp
             Tuple.cpp Tuple.hpp
+            TupleMap.cpp TupleMap.hpp
             Message.cpp Message.hpp
             PendingQueries.cpp PendingQueries.hpp
             Queue.cpp Queue.hpp

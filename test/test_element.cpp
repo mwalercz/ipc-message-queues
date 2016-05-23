@@ -19,7 +19,7 @@ BOOST_AUTO_TEST_CASE( TestElementInt )
 {
     int a = rand();
     Element i = Element(a);
-    BOOST_CHECK_EQUAL( i.getType(), Element::Type::Int );
+    BOOST_CHECK_EQUAL( i.getType(), Element::Type::kInt );
     BOOST_CHECK_EQUAL( *i.getInt(), a );
     BOOST_CHECK( i.getFloat() == nullptr );
     BOOST_CHECK( i.getString() == nullptr );
@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_CASE( TestElementFloat )
 {
     float a = float(rand());
     Element e = Element(a);
-    BOOST_CHECK_EQUAL( e.getType(), Element::Type::Float );
+    BOOST_CHECK_EQUAL( e.getType(), Element::Type::kFloat );
     BOOST_CHECK( e.getInt() == nullptr );
     BOOST_CHECK_EQUAL( *e.getFloat(), a );
     BOOST_CHECK( e.getString() == nullptr );
@@ -40,7 +40,7 @@ BOOST_AUTO_TEST_CASE( TestElementString )
 {
     std::string a = "test";
     Element e = Element(a);
-    BOOST_CHECK_EQUAL( e.getType(), Element::Type::String );
+    BOOST_CHECK_EQUAL( e.getType(), Element::Type::kString );
     BOOST_CHECK( e.getInt() == nullptr );
     BOOST_CHECK( e.getFloat() == nullptr );
     BOOST_CHECK_EQUAL( *e.getString(), a );
@@ -51,9 +51,9 @@ BOOST_AUTO_TEST_CASE( TestElementCompareDiffTypes )
 {
     std::string s = "test";
     int i = rand();
-    Element e1 = Element(s);
-    Element e2 = Element(i);
-    BOOST_CHECK_THROW(e1.compare(e2), std::domain_error);
+    Element a0 = Element(s);
+    Element a1 = Element(i);
+    BOOST_CHECK_THROW(a0.compare(a1), std::domain_error);
 }
 
 BOOST_AUTO_TEST_CASE( TestElementCompareStrings )
@@ -61,12 +61,38 @@ BOOST_AUTO_TEST_CASE( TestElementCompareStrings )
     std::string x = "x";
     std::string x_ = "x";
     std::string y = "y";
-    Element e1 = Element(x);
-    Element e2 = Element(x_);
-    Element e3 = Element(y);
-    BOOST_CHECK_EQUAL(e1.compare(e2), Element::Comparison::kEqual);
-    BOOST_CHECK_EQUAL(e1.compare(e3), Element::Comparison::kLower);
-    BOOST_CHECK_EQUAL(e3.compare(e1), Element::Comparison::kGreater);
+    Element a0 = Element(x);
+    Element a1 = Element(x_);
+    Element b = Element(y);
+    // positive
+    BOOST_CHECK(Element::fulfills(a0.compare(a0), Element::Comparison::kLowerOrEqual));
+    BOOST_CHECK(Element::fulfills(a0.compare(a0), Element::Comparison::kEqual));
+    BOOST_CHECK(Element::fulfills(a0.compare(a0), Element::Comparison::kGreaterOrEqual));
+
+    BOOST_CHECK(Element::fulfills(a0.compare(a1), Element::Comparison::kLowerOrEqual));
+    BOOST_CHECK(Element::fulfills(a0.compare(a1), Element::Comparison::kEqual));
+    BOOST_CHECK(Element::fulfills(a0.compare(a1), Element::Comparison::kGreaterOrEqual));
+
+    BOOST_CHECK(Element::fulfills(a0.compare(b), Element::Comparison::kLower));
+    BOOST_CHECK(Element::fulfills(a0.compare(b), Element::Comparison::kLowerOrEqual));
+
+    BOOST_CHECK(Element::fulfills(b.compare(a0), Element::Comparison::kGreater));
+    BOOST_CHECK(Element::fulfills(b.compare(a0), Element::Comparison::kGreaterOrEqual));
+
+    //negative
+    BOOST_CHECK(!Element::fulfills(a0.compare(a0), Element::Comparison::kLower));
+    BOOST_CHECK(!Element::fulfills(a0.compare(a0), Element::Comparison::kGreater));
+
+    BOOST_CHECK(!Element::fulfills(a0.compare(a1), Element::Comparison::kLower));
+    BOOST_CHECK(!Element::fulfills(a0.compare(a1), Element::Comparison::kGreater));
+
+    BOOST_CHECK(!Element::fulfills(a0.compare(b), Element::Comparison::kEqual));
+    BOOST_CHECK(!Element::fulfills(a0.compare(a1), Element::Comparison::kGreater));
+    BOOST_CHECK(!Element::fulfills(a0.compare(b), Element::Comparison::kGreaterOrEqual));
+
+    BOOST_CHECK(!Element::fulfills(b.compare(a0), Element::Comparison::kLowerOrEqual));
+    BOOST_CHECK(!Element::fulfills(b.compare(a0), Element::Comparison::kLower));
+    BOOST_CHECK(!Element::fulfills(b.compare(a0), Element::Comparison::kEqual));
 }
 
 BOOST_AUTO_TEST_CASE( TestElementCompareInts )
@@ -74,12 +100,38 @@ BOOST_AUTO_TEST_CASE( TestElementCompareInts )
     int x = -5;
     int x_ = -5;
     int y = 3;
-    Element e1 = Element(x);
-    Element e2 = Element(x_);
-    Element e3 = Element(y);
-    BOOST_CHECK_EQUAL(e1.compare(e2), Element::Comparison::kEqual);
-    BOOST_CHECK_EQUAL(e1.compare(e3), Element::Comparison::kLower);
-    BOOST_CHECK_EQUAL(e3.compare(e1), Element::Comparison::kGreater);
+    Element a0 = Element(x);
+    Element a1 = Element(x_);
+    Element b = Element(y);
+    // positive
+    BOOST_CHECK(Element::fulfills(a0.compare(a0), Element::Comparison::kLowerOrEqual));
+    BOOST_CHECK(Element::fulfills(a0.compare(a0), Element::Comparison::kEqual));
+    BOOST_CHECK(Element::fulfills(a0.compare(a0), Element::Comparison::kGreaterOrEqual));
+
+    BOOST_CHECK(Element::fulfills(a0.compare(a1), Element::Comparison::kLowerOrEqual));
+    BOOST_CHECK(Element::fulfills(a0.compare(a1), Element::Comparison::kEqual));
+    BOOST_CHECK(Element::fulfills(a0.compare(a1), Element::Comparison::kGreaterOrEqual));
+
+    BOOST_CHECK(Element::fulfills(a0.compare(b), Element::Comparison::kLower));
+    BOOST_CHECK(Element::fulfills(a0.compare(b), Element::Comparison::kLowerOrEqual));
+
+    BOOST_CHECK(Element::fulfills(b.compare(a0), Element::Comparison::kGreater));
+    BOOST_CHECK(Element::fulfills(b.compare(a0), Element::Comparison::kGreaterOrEqual));
+
+    //negative
+    BOOST_CHECK(!Element::fulfills(a0.compare(a0), Element::Comparison::kLower));
+    BOOST_CHECK(!Element::fulfills(a0.compare(a0), Element::Comparison::kGreater));
+
+    BOOST_CHECK(!Element::fulfills(a0.compare(a1), Element::Comparison::kLower));
+    BOOST_CHECK(!Element::fulfills(a0.compare(a1), Element::Comparison::kGreater));
+
+    BOOST_CHECK(!Element::fulfills(a0.compare(b), Element::Comparison::kEqual));
+    BOOST_CHECK(!Element::fulfills(a0.compare(a1), Element::Comparison::kGreater));
+    BOOST_CHECK(!Element::fulfills(a0.compare(b), Element::Comparison::kGreaterOrEqual));
+
+    BOOST_CHECK(!Element::fulfills(b.compare(a0), Element::Comparison::kLowerOrEqual));
+    BOOST_CHECK(!Element::fulfills(b.compare(a0), Element::Comparison::kLower));
+    BOOST_CHECK(!Element::fulfills(b.compare(a0), Element::Comparison::kEqual));
 }
 
 BOOST_AUTO_TEST_CASE( TestElementCompareFloats )
@@ -87,12 +139,38 @@ BOOST_AUTO_TEST_CASE( TestElementCompareFloats )
     float x = -1.75;
     float x_ = -1.75;
     float y = 3.0;
-    Element e1 = Element(x);
-    Element e2 = Element(x_);
-    Element e3 = Element(y);
-    BOOST_CHECK_EQUAL(e1.compare(e2), Element::Comparison::kEqual);
-    BOOST_CHECK_EQUAL(e1.compare(e3), Element::Comparison::kLower);
-    BOOST_CHECK_EQUAL(e3.compare(e1), Element::Comparison::kGreater);
+    Element a0 = Element(x);
+    Element a1 = Element(x_);
+    Element b = Element(y);
+    // positive
+    BOOST_CHECK(Element::fulfills(a0.compare(a0), Element::Comparison::kLowerOrEqual));
+    BOOST_CHECK(Element::fulfills(a0.compare(a0), Element::Comparison::kEqual));
+    BOOST_CHECK(Element::fulfills(a0.compare(a0), Element::Comparison::kGreaterOrEqual));
+
+    BOOST_CHECK(Element::fulfills(a0.compare(a1), Element::Comparison::kLowerOrEqual));
+    BOOST_CHECK(Element::fulfills(a0.compare(a1), Element::Comparison::kEqual));
+    BOOST_CHECK(Element::fulfills(a0.compare(a1), Element::Comparison::kGreaterOrEqual));
+
+    BOOST_CHECK(Element::fulfills(a0.compare(b), Element::Comparison::kLower));
+    BOOST_CHECK(Element::fulfills(a0.compare(b), Element::Comparison::kLowerOrEqual));
+
+    BOOST_CHECK(Element::fulfills(b.compare(a0), Element::Comparison::kGreater));
+    BOOST_CHECK(Element::fulfills(b.compare(a0), Element::Comparison::kGreaterOrEqual));
+
+    //negative
+    BOOST_CHECK(!Element::fulfills(a0.compare(a0), Element::Comparison::kLower));
+    BOOST_CHECK(!Element::fulfills(a0.compare(a0), Element::Comparison::kGreater));
+
+    BOOST_CHECK(!Element::fulfills(a0.compare(a1), Element::Comparison::kLower));
+    BOOST_CHECK(!Element::fulfills(a0.compare(a1), Element::Comparison::kGreater));
+
+    BOOST_CHECK(!Element::fulfills(a0.compare(b), Element::Comparison::kEqual));
+    BOOST_CHECK(!Element::fulfills(a0.compare(a1), Element::Comparison::kGreater));
+    BOOST_CHECK(!Element::fulfills(a0.compare(b), Element::Comparison::kGreaterOrEqual));
+
+    BOOST_CHECK(!Element::fulfills(b.compare(a0), Element::Comparison::kLowerOrEqual));
+    BOOST_CHECK(!Element::fulfills(b.compare(a0), Element::Comparison::kLower));
+    BOOST_CHECK(!Element::fulfills(b.compare(a0), Element::Comparison::kEqual));
 }
 
 BOOST_AUTO_TEST_SUITE_END()
