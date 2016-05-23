@@ -10,7 +10,7 @@ void Queue::init() {
   pid = getpid();
   int msgflg = IPC_CREAT | 0666;
   if((msqid = msgget(key, msgflg)) < 0) {
-    throw std::runtime_error("Can't open queue");
+    throw std::runtime_error("ERROR: Can't open queue");
   }
 }
 
@@ -22,28 +22,26 @@ void Queue::close() {
 void Queue::sendHeader(pid_t pid, int size, int time, int timeout) {
   MsgHeader msg;
   msg.mtype = pid;
-  msg.header[0] = size;
-  msg.header[1] = time;
-  msg.header[2] = timeout;
+  msg.size = size;
+  msg.time = time;
+  msg.timeout = timeout;
   msgsnd(msqid,&msg,msgHeaderSize,0);
 }
 
 
-void Queue::send(pid_t pid, const std::string &str) {
+void Queue::send(pid_t pid, const std::string &str, int timeout) {
+  int msgSize = str.size() + 1; //null terminated C string (+1)
   sendHeader(pid,
-         str.size()+1, //null terminated string
-         time(0),
-         timeout);
+	     msgSize,
+	     time(0),
+	     timeout);
   //Send body
-  MsgBody msg;
-  msg.mtype = pid;
-  // char *buf = new char[str.size()+sizeof(long)];
+  MsgBody *msg = reinterpret_cast<MsgBody*>(malloc(sizeof(MsgBody)+msgSize));
+  msg->mtype = pid;
+  std::strcpy(msg->body, str.c_str());
 
-  // msg.body = static_cast<char[]>(buf);
-
-  std::strcpy(msg.body, str.c_str());
-
-  msgsnd(msqid,&msg,str.size()+1,0);
+  msgsnd(msqid,msg,str.size()+1,0);
+  free(msg);
 }
 
 Queue::MsgHeader Queue::clientRcvHeader() {
@@ -53,15 +51,20 @@ Queue::MsgHeader Queue::clientRcvHeader() {
 }
 
 std::string Queue::clientRcvBody(int size) {
-  MsgBody msg;
+  MsgBody *msg = reinterpret_cast<MsgBody*>(malloc(sizeof(MsgBody)+size));
 
-  msgrcv(msqid,&msg,size,pid,0);
-  std::string str(msg.body);
+  msgrcv(msqid,msg,size,pid,0);
+  std::string str(msg->body);
+  free(msg);
   return str;
 }
 
 std::string Queue::clientRcv() {
   MsgHeader msg = clientRcvHeader();
-  //TODO: Timeout messsage handling
-  return clientRcvBody(msg.header[0]);
+  if(msg.timeout==0)
+    return clientRcvBody(msg.size);
+  else if(msg.timeout==1)
+    return "TIMEOUT";
+  else
+    throw std::runtime_error("ERROR: Wrong timeout value from server: (should be 0 or 1)");
 }

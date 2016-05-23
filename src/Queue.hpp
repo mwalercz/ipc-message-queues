@@ -10,15 +10,17 @@ class Queue{
 private:
   const static int timeout = 500; //ms?
   const static int msgHeaderSize = 3*sizeof(int);
-  const static int msgBodySize = 1024;
+  //const static int msgBodySize = 1024;
 
   struct MsgHeader {
     long mtype;
-    int header[3]; //0 - size,1 - time,2 - timeout
+    int size;
+    int time;
+    int timeout;
   };
   struct MsgBody {
     long mtype;
-    char body[msgBodySize];
+    char body[256];
   };
 
 
@@ -39,15 +41,15 @@ public:
   void close();
 
 
-  void send(pid_t pid, const std::string &str);
-  void send(const std::string &str) {send(pid,str);}
+  void send(pid_t pid, const std::string &str, int timeout=0);
+
+  void clientSend(const std::string &str) {send(pid,str,timeout);}
 
   void sendTimeoutInfo(pid_t pid) {
     sendHeader(pid,0,time(0),1); //timeout = 1
   }
 
   std::string clientRcv();
-
   //TODO: Server receive -- Maciek K.?
 };
 
