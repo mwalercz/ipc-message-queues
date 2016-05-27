@@ -3,30 +3,38 @@
 %debug
 %error-verbose
 %baseclass-preinclude ../Tuple.hpp
-%token INTEGER STRING FLOAT DIGIT WORD SIGN
+%token INTEGER STRING FLOAT SIGN
+%token INTEGER_VAL STRING_VAL FLOAT_VAL
 %token OUTPUT READ INPUT
-%token COMA, DCOLON, STAR, DOT
-%polymorphic string_val: std::string;
-             integer_val: int;
-             float_val: float;
-
-             tuple_elements: std::vector<Element>;
-             tuple_element: Element;
-             tuple: Tuple;
-
+%token COMA, DCOLON, STAR
+%polymorphic String: std::string*;
+             Int: int*;
+             Float: float*;
+             Tuple_elements: std::vector<Element>;
+             Element: Element*;
+             Tuple: Tuple*;
              parts: std::vector<std::string>;
 
+%type <String> string_val
+%type <Int> integer_val
+%type <Float> float_val
+%type <Element> tuple_element
+%type <Tuple_elements> tuple_elements
+%type <Tuple> tuple
 
 %%
 message:
     query
     {
-        result(new Query)
+       std::unique_ptr<Message> ptr(new Query);
+       this->result = std::move(ptr);
     }
     | tuple
     {
-        result(new Tuple)
+        std::unique_ptr<Message> ptr(new Output);
+        this->result = std::move(ptr);
     }
+
 ;
 
 query:
@@ -56,27 +64,35 @@ part:
 
 
 integer_val:
-    number
-
+    INTEGER_VAL
+    {
+        int * ptr = new int(std::stoi(d_scanner.matched()));
+        $$ = ptr;
+    }
 ;
 
 float_val:
-    number DOT number
-    | number DOT
+    FLOAT_VAL
+    {
+        float * ptr = new float(std::stof(d_scanner.matched()));
+        $$ = ptr;
+    }
 ;
 
 string_val:
-    WORD
-    | string_val WORD
-;
-
-number:
-    DIGIT
-    | number DIGIT
+    STRING_VAL
+    {
+        $$ = new std::string(d_scanner.matched());
+    }
 ;
 
 tuple:
     tuple_head tuple_elements
+    {
+        $$ = new Tuple($2);
+    }
+
+
 ;
 
 tuple_head:
@@ -85,11 +101,31 @@ tuple_head:
 
 tuple_elements:
     tuple_element
+    {
+        ($$).push_back(*$1);
+        delete $1;
+    }
     | tuple_elements COMA tuple_element
+    {
+        ($$).push_back(*$3);
+        delete $3;
+    }
 ;
 
 tuple_element:
     float_val
+    {
+       $$ = new Element($1);
+    }
+
     | integer_val
+    {
+       $$ = new Element($1);
+    }
+
     | string_val
+    {
+       $$ = new Element($1);
+    }
+
 ;

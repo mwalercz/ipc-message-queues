@@ -5,64 +5,65 @@
 
 // $insert baseclass_h
 #include "Scannerbase.h"
-
+#include "Parserbase.h"
 
 // $insert classHead
-class Scanner: public ScannerBase
-{
-    public:
-        explicit Scanner(std::istream &in = std::cin,
-                                std::ostream &out = std::cout);
+class Scanner : public ScannerBase {
+public:
+    explicit Scanner(std::istream &in = std::cin,
+                     std::ostream &out = std::cout);
 
-        Scanner(std::string const &infile, std::string const &outfile);
-        
-        // $insert lexFunctionDecl
-        int lex();
+    Scanner(std::string const &infile, std::string const &outfile);
 
-    private:
-        int lex__();
-        int executeAction__(size_t ruleNr);
+    // $insert lexFunctionDecl
+    int lex();
 
-        void print();
-        void preCode();     // re-implement this function for code that must 
-                            // be exec'ed before the patternmatching starts
+    void setSval(Meta__::SType *stype);
 
-        void postCode(PostEnum__ type);    
-                            // re-implement this function for code that must 
-                            // be exec'ed after the rules's actions.
+private:
+    Meta__::SType * stype_;
+
+    int lex__();
+
+    int executeAction__(size_t ruleNr);
+
+    void print();
+
+    void preCode();     // re-implement this function for code that must
+    // be exec'ed before the patternmatching starts
+
+    void postCode(PostEnum__ type);
+    // re-implement this function for code that must
+    // be exec'ed after the rules's actions.
 };
 
 // $insert scannerConstructors
 inline Scanner::Scanner(std::istream &in, std::ostream &out)
-:
-    ScannerBase(in, out)
-{}
+        :
+        ScannerBase(in, out) { }
 
 inline Scanner::Scanner(std::string const &infile, std::string const &outfile)
-:
-    ScannerBase(infile, outfile)
-{}
+        :
+        ScannerBase(infile, outfile) { }
 
 // $insert inlineLexFunction
-inline int Scanner::lex()
-{
+inline int Scanner::lex() {
     return lex__();
 }
 
-inline void Scanner::preCode() 
-{
+inline void Scanner::preCode() {
     // optionally replace by your own code
 }
 
-inline void Scanner::postCode(PostEnum__ type) 
-{
+inline void Scanner::postCode(PostEnum__ type) {
     // optionally replace by your own code
 }
 
-inline void Scanner::print() 
-{
+inline void Scanner::print() {
     print__();
 }
+
+
 
 
 #endif // Scanner_H_INCLUDED_

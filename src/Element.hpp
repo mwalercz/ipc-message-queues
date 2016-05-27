@@ -5,6 +5,10 @@
 
 class Element {
     public:
+        Element() {};
+        Element(float* float_value);
+        Element(int* int_value);
+        Element(std::string* string_value);
         enum Type {
             Int,
             Float,

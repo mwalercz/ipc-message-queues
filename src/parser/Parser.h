@@ -5,6 +5,9 @@
 
 #include "Parserbase.h"
 #include "Scanner.h"
+#include "../Message.hpp"
+#include "../Element.hpp"
+#include "../Tuple.hpp"
 
 
 #undef Parser
@@ -12,15 +15,17 @@
 class Parser : public ParserBase {
 
 public:
-
+    Parser();
     std::unique_ptr<Message> parse(std::string input);
 
     int parse__(std::string input);
+    std::unique_ptr<Message> result;
+
+
 
 private:
     Scanner d_scanner;
 
-    std::unique_ptr<Message> result;
 
     void switchStreams(std::istream &in, std::ostream &out);
 

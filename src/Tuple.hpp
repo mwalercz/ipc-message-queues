@@ -8,6 +8,7 @@ class Tuple {
     public:
         typedef long Type;
         Tuple();
+//        setElements(Elements elements);
         explicit Tuple(Elements elements);
         bool isMatch(const Query& other) const;
     private:

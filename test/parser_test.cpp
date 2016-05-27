@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_CASE(ParserSimpleInput) {
 }
 
 BOOST_AUTO_TEST_CASE(ParserSimpleQuery) {
-    std::string in = "read integer: *, float :>2. , string:=ma jka";
+    std::string in = "read integer: *, float :>2. , string:=majka";
     Parser parser;
     BOOST_CHECK_EQUAL(parser.parse__(in), 0);
     BOOST_CHECK_EQUAL(parser.parse__(in), 0);

@@ -6,13 +6,13 @@
 ":"                return Parser::DCOLON;
 ","                return Parser::COMA;
 "*"                return Parser::STAR;
-"."                return Parser::DOT;
 "output"           return Parser::OUTPUT;
 "input"            return Parser::INPUT;
 "read"             return Parser::READ;
-[0-9]              return Parser::DIGIT;
 "integer"          return Parser::INTEGER;
 "string"           return Parser::STRING;
 "float"            return Parser::FLOAT;
-[A-Za-z]+          return Parser::WORD;
-[>=<]              return Parser::SIGN;
+[>=<]+             return Parser::SIGN;
+[0-9]+\.[0-9]?     return Parser::FLOAT_VAL;
+[0-9]+             return Parser::INTEGER_VAL;
+[A-Za-z]+          return Parser::STRING_VAL;
