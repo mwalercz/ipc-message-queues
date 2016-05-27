@@ -1,8 +1,12 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
-#include "Tuple.hpp"
-#include "Message.hpp"
+
 #include <memory>
+
+#include "Element.hpp"
+#include "TupleMap.hpp"
+#include "Message.hpp"
+#include "PendingQueries.hpp"
 
 // TODO
 // * Queue class
@@ -12,16 +16,19 @@
 template <typename T>
 using UnqPtr = std::unique_ptr<T>;
 
-class Server {
+class Server : MessageVisitor {
 public:
     Server();
     virtual ~Server();
+    virtual void visit(Output& output);
+    virtual void visit(Query& query);
+
     void serve();
 private:
-    Message getCompletedMessage();
-    void handleQuery(Query query);
-    void handleOutput(Output output);
-    void addToPendingQueries(Query query);
+    UnqPtr<Message> getCompletedMessage();
+    void handleQuery(const Query& query);
+    void handleOutput(const Output& output);
+    void addToPendingQueries(const Query& query);
 
 
     // FIXME
@@ -29,6 +36,7 @@ private:
     // Queue queue_out_;
     // Queue queue_in_;
     TupleMap tuples_;
+    PendingQueries pending_queries_;
 
 };
 

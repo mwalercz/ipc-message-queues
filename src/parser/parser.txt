@@ -2,49 +2,52 @@
 %print-tokens
 %debug
 %error-verbose
-%baseclass-preinclude ../Tuple.hpp
+%baseclass-preinclude ../Message.hpp
 %token INTEGER STRING FLOAT SIGN
 %token INTEGER_VAL STRING_VAL FLOAT_VAL
 %token OUTPUT READ INPUT
 %token COMA, DCOLON, STAR
-%polymorphic String: std::string*;
-             Int: int*;
-             Float: float*;
-             Tuple_elements: std::vector<Element>;
+%polymorphic String: std::string;
+             Int: int;
+             Float: float;
+             Boolean: bool;
              Element: Element*;
              Tuple: Tuple*;
-             parts: std::vector<std::string>;
+             Comparison: Element::Comparison;
 
 %type <String> string_val
 %type <Int> integer_val
 %type <Float> float_val
 %type <Element> tuple_element
-%type <Tuple_elements> tuple_elements
 %type <Tuple> tuple
+%type <Boolean> query_head
+%type <Comparison> comparison
 
 %%
 message:
-    query
+    query_head parts
     {
-       std::unique_ptr<Message> ptr(new Query);
-       this->result = std::move(ptr);
+        this->result_ = new Query(msgPid_, time_, timeDuration_, typeCalculator_.getType(), queryParts_, $1);
     }
     | tuple
     {
-        std::unique_ptr<Message> ptr(new Output);
-        this->result = std::move(ptr);
+        Message* message = new Output(*$1, msgPid_, time_, timeDuration_);
+        delete $1;
+        this->result_ = message;
     }
 
 ;
 
-query:
-    query_head parts
-
-;
 
 query_head:
-    OUTPUT
+    INPUT
+    {
+        $$ = false;
+    }
     | READ
+    {
+        $$ = true;
+    }
 ;
 
 parts:
@@ -54,61 +57,111 @@ parts:
 
 part:
     INTEGER DCOLON STAR
+    {
+        Element element(0);
+        typeCalculator_.calculate(element);
+    }
     | FLOAT DCOLON STAR
+    {
+        float flo(0.0);
+        Element element(flo);
+        typeCalculator_.calculate(element);
+    }
     | STRING DCOLON STAR
-    | INTEGER DCOLON SIGN integer_val
-    | FLOAT DCOLON SIGN float_val
-    | STRING DCOLON SIGN string_val
+    {
+        std::string str("");
+        Element element(str);
+        typeCalculator_.calculate(element);
+    }
+    | INTEGER DCOLON comparison integer_val
+    {
+        Element element($4);
+        typeCalculator_.calculate(element);
+        QueryPart qp(queryParts_.size(), element, $3);
+        queryParts_.push_back(qp);
+    }
+    | FLOAT DCOLON comparison float_val
+    {
+         Element element($4);
+         typeCalculator_.calculate(element);
+         QueryPart qp(queryParts_.size(), element, $3);
+         queryParts_.push_back(qp);
+    }
+    | STRING DCOLON comparison string_val
+    {
+         Element element($4);
+         typeCalculator_.calculate(element);
+         QueryPart qp(queryParts_.size(), element, $3);
+         queryParts_.push_back(qp);
+    }
 ;
 
-
+comparison:
+    SIGN
+    {
+        std::string matched = std::string(d_scanner.matched());
+        if (matched == ">")
+            $$ = Element::Comparison::kGreater;
+        if (matched == ">=")
+            $$ = Element::Comparison::kGreaterOrEqual;
+        if (matched == "=")
+            $$ = Element::Comparison::kEqual;
+        if (matched == "<")
+            $$ = Element::Comparison::kLower;
+        if (matched == "<=")
+            $$ = Element::Comparison::kLowerOrEqual;
+    }
+;
 
 integer_val:
     INTEGER_VAL
     {
-        int * ptr = new int(std::stoi(d_scanner.matched()));
-        $$ = ptr;
+        $$ = int(std::stoi(d_scanner.matched()));
     }
 ;
 
 float_val:
     FLOAT_VAL
     {
-        float * ptr = new float(std::stof(d_scanner.matched()));
-        $$ = ptr;
+
+        $$ = float(std::stof(d_scanner.matched()));
     }
 ;
 
 string_val:
     STRING_VAL
     {
-        $$ = new std::string(d_scanner.matched());
+        $$ = std::string(d_scanner.matched());
     }
 ;
 
 tuple:
     tuple_head tuple_elements
     {
-        $$ = new Tuple($2);
+        $$ = new Tuple(tupleElements_);
+
     }
 
 
 ;
 
 tuple_head:
-    INPUT
+    OUTPUT
 ;
 
 tuple_elements:
     tuple_element
     {
-        ($$).push_back(*$1);
+        tupleElements_.push_back(*$1);
         delete $1;
+
+
     }
     | tuple_elements COMA tuple_element
     {
-        ($$).push_back(*$3);
+        tupleElements_.push_back(*$3);
         delete $3;
+
     }
 ;
 

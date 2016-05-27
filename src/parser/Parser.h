@@ -16,16 +16,24 @@ class Parser : public ParserBase {
 
 public:
     Parser();
-    std::unique_ptr<Message> parse(std::string input);
+    Message* parse(std::string input, Time time, TimeDuration timeDuration, MsgPid msgPid);
 
     int parse__(std::string input);
-    std::unique_ptr<Message> result;
+    Message* result_;
 
 
 
 private:
     Scanner d_scanner;
 
+    Time time_;
+    TimeDuration timeDuration_;
+    MsgPid msgPid_;
+
+    Elements tupleElements_;
+    Query::QueryParts queryParts_;
+
+    TypeCalculator typeCalculator_;
 
     void switchStreams(std::istream &in, std::ostream &out);
 
@@ -48,6 +56,11 @@ private:
     void print__();
 
     void exceptionHandler__(std::exception const &exc);
+
+    void prepareObjects();
+
+    void prepareStreams(std::string input);
+
 };
 
 

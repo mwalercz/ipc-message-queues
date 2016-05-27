@@ -1,5 +1,11 @@
 #include "Tuple.hpp"
 
+#include <stdexcept>
+#include <string>
+#include <memory>
+
+#include "Message.hpp"
+
 Tuple::Tuple(Elements elements) : elements_(elements) {
     type_ = calculateType(elements);
 }
@@ -15,29 +21,81 @@ bool Tuple::isMatch(const Query& query) const {
     return true;
 }
 
-Tuple::Type Tuple::calculateType(const Elements& elements) const {
+Tuple::Type Tuple::getType() const {
+    return type_;
+}
+
+Tuple::Type Tuple::calculateType(const Elements& elements) {
     if (elements.size() > 32) {
-        //FIXME
-        // throw up;
+        throw std::domain_error("Element size must be lower or equal 32. (" +
+                                std::to_string(elements.size()) + ")");
     }
     Type types = 0;
     for (auto element : elements) {
+        types <<= 2;
         switch (element.getType()) {
-            case Element::Type::Int:
+            case Element::Type::kInt:
                 types |= 1;
                 break;
-            case Element::Type::Float:
+            case Element::Type::kFloat:
                 types |= 2;
                 break;
-            case Element::Type::String:
+            case Element::Type::kString:
                 types |= 3;
                 break;
-            default:
-                //FIXME
-                // throw up;
-                break;
         }
-        types <<= 2;
     }
     return types;
 }
+
+bool Tuple::operator==(const Tuple& other) const {
+    if (type_ != other.getType())
+        return false;
+    for (int i=0; i<elements_.size(); ++i) {
+        if (elements_[i] != other.elements_.at(i))
+            return false;
+    }
+    return true;
+}
+
+
+void TypeCalculator::calculate(const Element &element) {
+    if (current_idx > 30){
+        throw std::domain_error("Element size must be lower or equal 32");
+    }
+    type_ <<= 2;
+    switch (element.getType()) {
+        case Element::Type::kInt:
+            type_ |= 1;
+            break;
+        case Element::Type::kFloat:
+            type_ |= 2;
+            break;
+        case Element::Type::kString:
+            type_ |= 3;
+            break;
+    }
+}
+
+Tuple::Type TypeCalculator::getType() {
+    return type_;
+}
+
+void TypeCalculator::reset() {
+    type_ = 0;
+}
+
+TypeCalculator::TypeCalculator() : type_(0), current_idx(0){
+
+}
+
+
+
+
+
+
+
+
+
+
+

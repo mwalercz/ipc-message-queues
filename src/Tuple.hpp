@@ -1,30 +1,38 @@
 #ifndef TUPLE_HPP
 #define TUPLE_HPP
-#include "Message.hpp"
-#include "Element.hpp"
-#include <vector>
 
+#include <vector>
+#include <map>
+#include <memory>
+
+#include "Element.hpp"
+
+class Query;
 class Tuple {
     public:
         typedef long Type;
-        Tuple();
-//        setElements(Elements elements);
+        Tuple() = default;
         explicit Tuple(Elements elements);
         bool isMatch(const Query& other) const;
+        Type getType() const;
+
+        bool operator==(const Tuple& other) const;
     private:
+        static Type calculateType(const Elements& elements);
         Type type_;
         Elements elements_;
-        Type calculateType(const Elements& elements) const;
 };
 
-class TupleMap {
+class TypeCalculator{
     public:
-        void remove(Query query);
-        Tuple find(Query query);
+        TypeCalculator();
+        typedef long Type;
+        void calculate(const Element& element);
+        Type getType();
+        void reset();
+
     private:
-        std::map<Tuple::Type, Tuple> tuples_;
-        // last iterator maybe ?
-
+        Type type_;
+        int current_idx;
 };
-
-#endif /* ifndef TUPLE_HPP */
+#endif /* TUPLE_HPP */
