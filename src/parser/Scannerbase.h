@@ -38,7 +38,7 @@ protected:
         ECHO_CH,                // echo ch itself (d_matched empty)
         ECHO_FIRST,             // echo d_matched[0], push back the rest
         MATCH,                  // matched a rule
-        RETURN,                 // no further continuation, lex returns 0.
+        RETURN,                 // no further continuation, lexer returns 0.
     };
 
     enum class PostEnum__
@@ -101,7 +101,7 @@ private:
             void close()                    // force closing the stream
             {
                 delete d_in;
-                d_in = 0;                   // switchStreams also closes
+                d_in = 0;                   // switchInputStream also closes
             }
 
         private:

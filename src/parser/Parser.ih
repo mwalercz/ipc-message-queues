@@ -21,42 +21,39 @@ inline void Parser::exceptionHandler__(std::exception const &exc) {
     throw;              // re-implement to handle exceptions thrown by actions
 }
 
-int Parser::parse__(std::string input) {
-    std::stringstream inputss;
-    inputss.str(input);
-    std::stringstream outputss;
-    switchStreams(inputss, outputss);
+int Parser::prepareAndParse(const std::string& input) {
+    std::istringstream in(input);
+    switchInputStream(in);
     prepareObjects();
-    int res =  parse();
-    return res;
-}
-void Parser::prepareStreams(std::string input) {
-
+    return parse();
 }
 
-Message* Parser::parse(std::string input, Time time, TimeDuration timeDuration, MsgPid msgPid) {
-    time_ = time;
-    timeDuration_ = timeDuration;
+std::unique_ptr<Message> Parser::parse(const std::string& input, Time sendTime, TimeDuration timeout, MsgPid msgPid) {
+    initVariables(sendTime, timeout, msgPid);
+    if (prepareAndParse(input) == 0)
+        return std::move(result_);
+    else throw std::domain_error("Given string is not valid and cannot be parsed");
+}
+
+void Parser::initVariables(Time sendTime, TimeDuration timeout, MsgPid msgPid) {
+    time_ = sendTime;
+    timeDuration_ = timeout;
     msgPid_ = msgPid;
-    parse__(input);
-    return std::move(result_);
-
 }
 
-void Parser::prepareObjects(){
+void Parser::prepareObjects() {
+    queryPart_idx = 0;
     typeCalculator_.reset();
     tupleElements_.clear();
     queryParts_.clear();
 }
 
 
-void Parser::switchStreams(std::istream &in, std::ostream &out) {
-    d_scanner.switchStreams(in, out);
+void Parser::switchInputStream(std::istream &in) {
+    d_scanner.switchStreams(in);
 }
 
-Parser::Parser() {
-    d_scanner.setSval(&d_val__);
-}
+
 
 
 

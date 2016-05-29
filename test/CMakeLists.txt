@@ -18,7 +18,7 @@ target_link_libraries(Test
         ${Boost_SYSTEM_LIBRARY}
         ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
         )
-add_executable(TestParser test_parser.cpp)
+add_executable(TestParser test_parser.cpp ../src/HelperFuns.hpp)
 target_link_libraries(TestParser
         Parser
         QueuesServ

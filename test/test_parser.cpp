@@ -1,6 +1,7 @@
 #define BOOST_TEST_MODULE ParserTests
 
 #include <boost/test/unit_test.hpp>
+#include <HelperFuns.hpp>
 #include "parser/Scanner.h"
 #include "parser/Parser.h"
 
@@ -24,38 +25,62 @@ BOOST_AUTO_TEST_CASE(ScannerSimpleTest) {
 BOOST_AUTO_TEST_CASE(ParserSimpleOutput) {
     std::string in = "output 1, 2.0, mama";
     Parser parser;
-    Message* msg_ptr = parser.parse(in, 1, 1, 1);
-    Output * out_ptr = dynamic_cast<Output*>(msg_ptr);
-    delete out_ptr;
-//    BOOST_CHECK_EQUAL(result, 0);
+    auto realOutputPtr = dynamic_unique_ptr_cast<Output>(parser.parse(in, 1, 1, 1));
+    Tuple realTuple = realOutputPtr.get()->getTuple();
+    Elements elements;
+    elements.push_back(Element(1));
+    elements.push_back(Element(float(2.0)));
+    elements.push_back(Element("mama"));
+    Tuple expectedTuple(elements);
+    BOOST_CHECK(expectedTuple == realTuple);
 }
 
 BOOST_AUTO_TEST_CASE(ParserSimpleOutputTwo) {
     std::string in = "output 6, 8.0, jacek, 12";
     Parser parser;
-    Message* msg_ptr = parser.parse(in, 1, 1, 1);
-    Output * out_ptr = dynamic_cast<Output*>(msg_ptr);
-    delete out_ptr;
-//    BOOST_CHECK_EQUAL(result, 0);
+    auto realOutputPtr = dynamic_unique_ptr_cast<Output>(parser.parse(in, 1, 1, 1));
+    Tuple realTuple = realOutputPtr.get()->getTuple();
+    Elements elements;
+    elements.push_back(Element(6));
+    elements.push_back(Element(float(8.0)));
+    elements.push_back(Element("jacek"));
+    elements.push_back(Element(12));
+    Tuple expectedTuple(elements);
+    BOOST_CHECK(expectedTuple == realTuple);
+
 }
 
 BOOST_AUTO_TEST_CASE(ParserSimpleQuery) {
     std::string in = "input integer:=5, float :>2., string:=majka";
     Parser parser;
-    Message* msg_ptr = parser.parse(in, 1, 1, 1);
-
-    Query* query_ptr = dynamic_cast<Query*>(msg_ptr);
-    delete query_ptr;
+    auto realQueryPtr = dynamic_unique_ptr_cast<Query>(parser.parse(in, 1, 1, 1));
+    Elements elements;
+    elements.push_back(Element(5));
+    elements.push_back(Element(float(8.0)));
+    elements.push_back(Element("majka"));
+    Tuple expectedTuple(elements);
+    BOOST_CHECK(expectedTuple.isMatch(*realQueryPtr.get()));
+    elements.push_back(Element(1));
+    Tuple differentTuple(elements);
+    BOOST_CHECK(!differentTuple.isMatch(*realQueryPtr.get()));
 
 }
 
 BOOST_AUTO_TEST_CASE(ParserSimpleQueryTwo) {
     std::string in = "read integer:*, float :>8., string:=majka, string:*";
     Parser parser;
-    Message* msg_ptr = parser.parse(in, 1, 1, 1);
+    auto realQueryPtr = dynamic_unique_ptr_cast<Query>(parser.parse(in, 1, 1, 1));
+    Elements elements;
+    elements.push_back(Element(1));
+    elements.push_back(Element(float(7.0)));
+    elements.push_back(Element("majka"));
+    elements.push_back(Element("ha"));
+    Tuple expectedTuple(elements);
+    BOOST_CHECK(!expectedTuple.isMatch(*realQueryPtr.get()));
+//    elements.push_back(Element(1));
+//    Tuple differentTuple(elements);
+//    BOOST_CHECK(!differentTuple.isMatch(*realQueryPtr.get()));
 
-    Query* query_ptr = dynamic_cast<Query*>(msg_ptr);
-    delete query_ptr;
-//    BOOST_CHECK_EQUAL(parser.parse__(in), 0);
+
 
 }

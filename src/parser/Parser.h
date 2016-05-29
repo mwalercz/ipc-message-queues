@@ -15,51 +15,35 @@
 class Parser : public ParserBase {
 
 public:
-    Parser();
-    Message* parse(std::string input, Time time, TimeDuration timeDuration, MsgPid msgPid);
-
-    int parse__(std::string input);
-    Message* result_;
-
-
-
+    std::unique_ptr<Message> parse(const std::string &input,
+                                   Time sendTime,
+                                   TimeDuration timeout,
+                                   MsgPid msgPid);
 private:
     Scanner d_scanner;
-
+    std::unique_ptr<Message> result_;
     Time time_;
     TimeDuration timeDuration_;
     MsgPid msgPid_;
-
     Elements tupleElements_;
     Query::QueryParts queryParts_;
-
     TypeCalculator typeCalculator_;
-
-    void switchStreams(std::istream &in, std::ostream &out);
+    int queryPart_idx;
 
     int parse();
-
     void error(char const *msg);
-
     int lex();
-
     void print();
-
     void executeAction(int ruleNr);
-
     void errorRecovery();
-
     int lookup(bool recovery);
-
     void nextToken();
-
     void print__();
-
     void exceptionHandler__(std::exception const &exc);
-
     void prepareObjects();
-
-    void prepareStreams(std::string input);
+    void initVariables(Time sendTime, TimeDuration timeout, MsgPid msgPid);
+    void switchInputStream(std::istream &in);
+    int prepareAndParse(const std::string &input);
 
 };
 

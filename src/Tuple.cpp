@@ -11,6 +11,8 @@ Tuple::Tuple(Elements elements) : elements_(elements) {
 }
 
 bool Tuple::isMatch(const Query& query) const {
+    if (getType() != query.getType())
+        return false;
     Query::QueryParts parts = query.getParts();
     for (auto p : parts) {
         Length idx = p.getIdx();

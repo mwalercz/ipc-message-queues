@@ -3,6 +3,3 @@
 // $insert class_h
 #include "Scanner.h"
 
-void Scanner::setSval(Meta__::SType *stype) {
-    stype_ = stype;
-}

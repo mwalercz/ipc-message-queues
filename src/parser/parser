@@ -27,13 +27,13 @@
 message:
     query_head parts
     {
-        this->result_ = new Query(msgPid_, time_, timeDuration_, typeCalculator_.getType(), queryParts_, $1);
+        this->result_ = std::move(std::unique_ptr<Message> (new Query(msgPid_, time_, timeDuration_, typeCalculator_.getType(), queryParts_, $1)));
     }
     | tuple
     {
-        Message* message = new Output(*$1, msgPid_, time_, timeDuration_);
+        this->result_ = std::move(std::unique_ptr<Message> (new Output(*$1, msgPid_, time_, timeDuration_)));
         delete $1;
-        this->result_ = message;
+
     }
 
 ;
@@ -60,39 +60,45 @@ part:
     {
         Element element(0);
         typeCalculator_.calculate(element);
+        queryPart_idx += 1;
     }
     | FLOAT DCOLON STAR
     {
         float flo(0.0);
         Element element(flo);
         typeCalculator_.calculate(element);
+        queryPart_idx += 1;
     }
     | STRING DCOLON STAR
     {
         std::string str("");
         Element element(str);
         typeCalculator_.calculate(element);
+        queryPart_idx += 1;
     }
     | INTEGER DCOLON comparison integer_val
     {
         Element element($4);
         typeCalculator_.calculate(element);
-        QueryPart qp(queryParts_.size(), element, $3);
+        QueryPart qp(queryPart_idx, element, $3);
         queryParts_.push_back(qp);
+        queryPart_idx += 1;
     }
     | FLOAT DCOLON comparison float_val
     {
          Element element($4);
          typeCalculator_.calculate(element);
-         QueryPart qp(queryParts_.size(), element, $3);
+         QueryPart qp(queryPart_idx, element, $3);
          queryParts_.push_back(qp);
+         queryPart_idx += 1;
     }
     | STRING DCOLON comparison string_val
     {
          Element element($4);
          typeCalculator_.calculate(element);
-         QueryPart qp(queryParts_.size(), element, $3);
+         QueryPart qp(queryPart_idx, element, $3);
          queryParts_.push_back(qp);
+         queryPart_idx += 1;
     }
 ;
 

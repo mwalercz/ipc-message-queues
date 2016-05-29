@@ -18,8 +18,6 @@ public:
     // $insert lexFunctionDecl
     int lex();
 
-    void setSval(Meta__::SType *stype);
-
 private:
     Meta__::SType * stype_;
 
