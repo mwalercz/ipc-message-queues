@@ -1,5 +1,5 @@
-add_library(Parser lex.cc Scanner.ih Scannerbase.h Scanner.h
-        parse.cc Parser.ih Parserbase.h Parser.h
-        ../Message.cpp ../Message.hpp
+add_library(Parser Scanner.cpp Scanner.ih Scannerbase.h Scanner.h
+        Parser.cpp Parser.ih Parserbase.h Parser.h
+        ../Message.hpp ../Message.cpp
         ../Element.hpp ../Element.cpp
         ../Tuple.cpp ../Tuple.hpp)

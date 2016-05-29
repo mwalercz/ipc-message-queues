@@ -1,3 +1,5 @@
+%target-directory "src/parser"
+%lex-source "Scanner.cpp"
 %print-tokens
 %debug
 %%

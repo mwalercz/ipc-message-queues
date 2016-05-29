@@ -60,10 +60,23 @@ bool Tuple::operator==(const Tuple& other) const {
     return true;
 }
 
+Tuple &Tuple::operator=(const Tuple &other) {
+    swap(other);
+    return *this;
+}
+
+void Tuple::swap(const Tuple &other) {
+    type_ = other.getType();
+    for (auto element : other.elements_){
+        elements_.push_back(element);
+    }
+
+}
+
 
 void TypeCalculator::calculate(const Element &element) {
-    if (current_idx > 30){
-        throw std::domain_error("Element size must be lower or equal 32");
+    if (current_idx > 31){
+        throw std::domain_error("Elements size must be lower or equal 32");
     }
     type_ <<= 2;
     switch (element.getType()) {
@@ -77,6 +90,7 @@ void TypeCalculator::calculate(const Element &element) {
             type_ |= 3;
             break;
     }
+    current_idx += 1;
 }
 
 Tuple::Type TypeCalculator::getType() {
@@ -85,11 +99,10 @@ Tuple::Type TypeCalculator::getType() {
 
 void TypeCalculator::reset() {
     type_ = 0;
+    current_idx = 0;
 }
 
-TypeCalculator::TypeCalculator() : type_(0), current_idx(0){
-
-}
+TypeCalculator::TypeCalculator() : type_(0), current_idx(0){}
 
 
 

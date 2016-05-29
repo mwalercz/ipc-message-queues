@@ -4,7 +4,7 @@
 #define Scanner_H_INCLUDED_
 
 // $insert baseclass_h
-#include "Scannerbase.hpp"
+#include "Scannerbase.h"
 #include "Parserbase.h"
 
 // $insert classHead

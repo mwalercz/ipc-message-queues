@@ -1,4 +1,7 @@
+%target-directory src/parser
+%parsefun-source Parser.cpp
 %scanner Scanner.h
+
 %print-tokens
 %debug
 %error-verbose
