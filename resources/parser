@@ -2,9 +2,9 @@
 %parsefun-source Parser.cpp
 %scanner Scanner.h
 
-%print-tokens
-%debug
-%error-verbose
+//%print-tokens
+//%debug
+//%error-verbose
 %baseclass-preinclude ../Message.hpp
 %token INTEGER STRING FLOAT SIGN
 %token INTEGER_VAL STRING_VAL FLOAT_VAL

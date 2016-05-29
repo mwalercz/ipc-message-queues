@@ -2,7 +2,6 @@
 
 #ifndef Parser_h_included
 #define Parser_h_included
-
 #include "Parserbase.h"
 #include "Scanner.h"
 #include "../Message.hpp"

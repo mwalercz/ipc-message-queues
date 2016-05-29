@@ -1,7 +1,7 @@
 %target-directory "src/parser"
 %lex-source "Scanner.cpp"
-%print-tokens
-%debug
+//%print-tokens
+//%debug
 %%
 
 [ \t\n\r]          // skip white space
