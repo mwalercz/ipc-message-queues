@@ -11,8 +11,8 @@
              Int: int;
              Float: float;
              Boolean: bool;
-             Element: Element*;
-             Tuple: Tuple*;
+             Element: Element;
+             Tuple: Tuple;
              Comparison: Element::Comparison;
 
 %type <String> string_val
@@ -31,8 +31,8 @@ message:
     }
     | tuple
     {
-        this->result_ = std::move(std::unique_ptr<Message> (new Output(*$1, msgPid_, time_, timeDuration_)));
-        delete $1;
+        this->result_ = std::move(std::unique_ptr<Message> (new Output($1, msgPid_, time_, timeDuration_)));
+
 
     }
 
@@ -144,8 +144,8 @@ string_val:
 tuple:
     tuple_head tuple_elements
     {
-        $$ = new Tuple(tupleElements_);
-
+        Tuple tuple(tupleElements_);
+        $$ = tuple;
     }
 
 
@@ -158,15 +158,15 @@ tuple_head:
 tuple_elements:
     tuple_element
     {
-        tupleElements_.push_back(*$1);
-        delete $1;
+        tupleElements_.push_back($1);
+
 
 
     }
     | tuple_elements COMA tuple_element
     {
-        tupleElements_.push_back(*$3);
-        delete $3;
+        tupleElements_.push_back($3);
+
 
     }
 ;
@@ -174,17 +174,21 @@ tuple_elements:
 tuple_element:
     float_val
     {
-       $$ = new Element($1);
+        Element element($1);
+        ($$) = element;
     }
 
     | integer_val
     {
-       $$ = new Element($1);
+
+         Element element($1);
+         ($$) = element;
     }
 
     | string_val
     {
-       $$ = new Element($1);
+          Element element($1);
+          ($$) = element;
     }
 
 ;

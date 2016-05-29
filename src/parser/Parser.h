@@ -4,7 +4,7 @@
 #define Parser_h_included
 
 #include "Parserbase.h"
-#include "Scanner.h"
+#include "Scanner.hpp"
 #include "../Message.hpp"
 #include "../Element.hpp"
 #include "../Tuple.hpp"

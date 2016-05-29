@@ -4,7 +4,7 @@
 #define Scanner_H_INCLUDED_
 
 // $insert baseclass_h
-#include "Scannerbase.h"
+#include "Scannerbase.hpp"
 #include "Parserbase.h"
 
 // $insert classHead
@@ -19,7 +19,6 @@ public:
     int lex();
 
 private:
-    Meta__::SType * stype_;
 
     int lex__();
 
