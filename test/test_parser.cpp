@@ -90,17 +90,17 @@ bool is_parsing_error(std::domain_error const &ex) {
 BOOST_AUTO_TEST_CASE(ParseFails) {
     std::string in = "read integer:*, float :>8., string:=5";
     Parser parser;
-    BOOST_CHECK_EXCEPTION(parser.parse(in, 1, 1, 1);, std::domain_error, is_parsing_error);
+    BOOST_CHECK_THROW(parser.parse(in, 1, 1, 1);, std::domain_error);
     std::string in_two = "read integer:*, float :>8., string:5.1";
-    BOOST_CHECK_EXCEPTION(parser.parse(in_two, 1, 1, 1);, std::domain_error, is_parsing_error);
+    BOOST_CHECK_THROW(parser.parse(in_two, 1, 1, 1);, std::domain_error);
     std::string in_three = "read float:5";
-    BOOST_CHECK_EXCEPTION(parser.parse(in_three, 1, 1, 1);, std::domain_error, is_parsing_error);
+    BOOST_CHECK_THROW(parser.parse(in_three, 1, 1, 1);, std::domain_error);
     std::string in_four = "read float:=\"str\"";
-    BOOST_CHECK_EXCEPTION(parser.parse(in_four, 1, 1, 1);, std::domain_error, is_parsing_error);
+    BOOST_CHECK_THROW(parser.parse(in_four, 1, 1, 1);, std::domain_error);
     std::string in_five = "output float:=\"str\"";
-    BOOST_CHECK_EXCEPTION(parser.parse(in_five, 1, 1, 1);, std::domain_error, is_parsing_error);
+    BOOST_CHECK_THROW(parser.parse(in_five, 1, 1, 1);, std::domain_error);
     std::string in_six = "output float:=5";
-    BOOST_CHECK_EXCEPTION(parser.parse(in_six, 1, 1, 1);, std::domain_error, is_parsing_error);
+    BOOST_CHECK_THROW(parser.parse(in_six, 1, 1, 1);, std::domain_error);
 
 
 }
