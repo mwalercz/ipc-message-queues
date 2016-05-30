@@ -146,7 +146,7 @@ tuple:
     tuple_head tuple_elements
     {
         Tuple tuple(tupleElements_);
-        $$ = tuple;
+        ($$).swap(tuple);
     }
 
 

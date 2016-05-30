@@ -17,9 +17,9 @@ class Tuple {
         Type getType() const;
 
         bool operator==(const Tuple& other) const;
-        Tuple& operator=(const Tuple& other);
-    private:
         void swap(const Tuple& other);
+
+    private:
         static Type calculateType(const Elements& elements);
         Type type_;
         Elements elements_;

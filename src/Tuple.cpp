@@ -60,10 +60,7 @@ bool Tuple::operator==(const Tuple& other) const {
     return true;
 }
 
-Tuple &Tuple::operator=(const Tuple &other) {
-    swap(other);
-    return *this;
-}
+
 
 void Tuple::swap(const Tuple &other) {
     type_ = other.getType();
