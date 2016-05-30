@@ -35,6 +35,7 @@ message:
     | tuple
     {
         this->result_ = std::move(std::unique_ptr<Message> (new Output($1, msgPid_, sendTime_, timeout_)));
+
     }
 
 ;
@@ -145,8 +146,7 @@ string_val:
 tuple:
     tuple_head tuple_elements
     {
-        Tuple tuple(tupleElements_);
-        ($$).swap(tuple);
+        $$ = Tuple(tupleElements_);
     }
 
 
@@ -170,19 +170,18 @@ tuple_elements:
 tuple_element:
     float_val
     {
-
-        ($$) = Element($1);
+        $$ = Element($1);
     }
 
     | integer_val
     {
 
-        ($$) = Element($1);
+        $$ = Element($1);
     }
 
     | string_val
     {
-        ($$) = Element($1);
+        $$ = Element($1);
     }
 
 ;
