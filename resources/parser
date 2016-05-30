@@ -30,13 +30,11 @@
 message:
     query_head parts
     {
-        this->result_ = std::move(std::unique_ptr<Message> (new Query(msgPid_, time_, timeDuration_, typeCalculator_.getType(), queryParts_, $1)));
+        this->result_ = std::move(std::unique_ptr<Message> (new Query(msgPid_, sendTime_, timeout_, typeCalculator_.getType(), queryParts_, $1)));
     }
     | tuple
     {
-        this->result_ = std::move(std::unique_ptr<Message> (new Output($1, msgPid_, time_, timeDuration_)));
-
-
+        this->result_ = std::move(std::unique_ptr<Message> (new Output($1, msgPid_, sendTime_, timeout_)));
     }
 
 ;
@@ -63,52 +61,52 @@ part:
     {
         Element element(0);
         typeCalculator_.calculate(element);
-        queryPart_idx += 1;
+        queryPartIdx_ += 1;
     }
     | FLOAT DCOLON STAR
     {
         float flo(0.0);
         Element element(flo);
         typeCalculator_.calculate(element);
-        queryPart_idx += 1;
+        queryPartIdx_ += 1;
     }
     | STRING DCOLON STAR
     {
         std::string str("");
         Element element(str);
         typeCalculator_.calculate(element);
-        queryPart_idx += 1;
+        queryPartIdx_ += 1;
     }
     | INTEGER DCOLON comparison integer_val
     {
         Element element($4);
         typeCalculator_.calculate(element);
-        QueryPart qp(queryPart_idx, element, $3);
+        QueryPart qp(queryPartIdx_, element, $3);
         queryParts_.push_back(qp);
-        queryPart_idx += 1;
+        queryPartIdx_ += 1;
     }
     | FLOAT DCOLON comparison float_val
     {
          Element element($4);
          typeCalculator_.calculate(element);
-         QueryPart qp(queryPart_idx, element, $3);
+         QueryPart qp(queryPartIdx_, element, $3);
          queryParts_.push_back(qp);
-         queryPart_idx += 1;
+         queryPartIdx_ += 1;
     }
     | STRING DCOLON comparison string_val
     {
          Element element($4);
          typeCalculator_.calculate(element);
-         QueryPart qp(queryPart_idx, element, $3);
+         QueryPart qp(queryPartIdx_, element, $3);
          queryParts_.push_back(qp);
-         queryPart_idx += 1;
+         queryPartIdx_ += 1;
     }
 ;
 
 comparison:
     SIGN
     {
-        std::string matched = std::string(d_scanner.matched());
+        std::string matched = std::string(d_scanner_.matched());
         if (matched == ">")
             $$ = Element::Comparison::kGreater;
         if (matched == ">=")
@@ -125,7 +123,7 @@ comparison:
 integer_val:
     INTEGER_VAL
     {
-        $$ = int(std::stoi(d_scanner.matched()));
+        $$ = int(std::stoi(d_scanner_.matched()));
     }
 ;
 
@@ -133,14 +131,14 @@ float_val:
     FLOAT_VAL
     {
 
-        $$ = float(std::stof(d_scanner.matched()));
+        $$ = float(std::stof(d_scanner_.matched()));
     }
 ;
 
 string_val:
     STRING_VAL
     {
-        $$ = std::string(d_scanner.matched());
+        $$ = std::string(d_scanner_.matched());
     }
 ;
 
@@ -162,15 +160,10 @@ tuple_elements:
     tuple_element
     {
         tupleElements_.push_back($1);
-
-
-
     }
     | tuple_elements COMA tuple_element
     {
         tupleElements_.push_back($3);
-
-
     }
 ;
 

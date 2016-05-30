@@ -11,7 +11,7 @@ inline void Parser::error(char const *msg) {
 }
 
 inline int Parser::lex() {
-    return d_scanner.lex();
+    return d_scanner_.lex();
 }
 
 inline void Parser::print() {
@@ -29,8 +29,6 @@ int Parser::prepareAndParse(const std::string& input) {
     return parse();
 }
 
-
-
 std::unique_ptr<Message> Parser::parse(const std::string& input, Time sendTime, TimeDuration timeout, MsgPid msgPid) {
     initVariables(sendTime, timeout, msgPid);
     if (prepareAndParse(input) == 0)
@@ -39,21 +37,20 @@ std::unique_ptr<Message> Parser::parse(const std::string& input, Time sendTime, 
 }
 
 void Parser::initVariables(Time sendTime, TimeDuration timeout, MsgPid msgPid) {
-    time_ = sendTime;
-    timeDuration_ = timeout;
+    sendTime_ = sendTime;
+    timeout_ = timeout;
     msgPid_ = msgPid;
 }
 
 void Parser::prepareObjects() {
-    queryPart_idx = 0;
+    queryPartIdx_ = 0;
     typeCalculator_.reset();
     tupleElements_.clear();
     queryParts_.clear();
 }
 
-
 void Parser::switchInputStream(std::istream &in) {
-    d_scanner.switchStreams(in);
+    d_scanner_.switchStreams(in);
 }
 
 

@@ -19,15 +19,15 @@ public:
                                    TimeDuration timeout,
                                    MsgPid msgPid);
 private:
-    Scanner d_scanner;
+    Scanner d_scanner_;
     std::unique_ptr<Message> result_;
-    Time time_;
-    TimeDuration timeDuration_;
+    Time sendTime_;
+    TimeDuration timeout_;
     MsgPid msgPid_;
     Elements tupleElements_;
     Query::QueryParts queryParts_;
     TypeCalculator typeCalculator_;
-    int queryPart_idx;
+    int queryPartIdx_;
 
     int parse();
     void error(char const *msg);

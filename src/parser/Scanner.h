@@ -14,24 +14,18 @@ public:
                      std::ostream &out = std::cout);
 
     Scanner(std::string const &infile, std::string const &outfile);
-
-    // $insert lexFunctionDecl
     int lex();
+    void beginCondition(StartCondition__ startCondition);
 
 private:
 
     int lex__();
-
     int executeAction__(size_t ruleNr);
-
     void print();
-
     void preCode();     // re-implement this function for code that must
     // be exec'ed before the patternmatching starts
-
     void postCode(PostEnum__ type);
-    // re-implement this function for code that must
-    // be exec'ed after the rules's actions.
+
 };
 
 // $insert scannerConstructors
@@ -60,7 +54,9 @@ inline void Scanner::print() {
     print__();
 }
 
-
+inline void Scanner::beginCondition(StartCondition__ startCondition) {
+    begin(startCondition);
+}
 
 
 #endif // Scanner_H_INCLUDED_
