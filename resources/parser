@@ -123,7 +123,7 @@ comparison:
 integer_val:
     INTEGER_VAL
     {
-        $$ = int(std::stoi(d_scanner_.matched()));
+        $$ = std::stoi(d_scanner_.matched());
     }
 ;
 
@@ -131,7 +131,7 @@ float_val:
     FLOAT_VAL
     {
 
-        $$ = float(std::stof(d_scanner_.matched()));
+        $$ = std::stof(d_scanner_.matched());
     }
 ;
 
@@ -170,21 +170,19 @@ tuple_elements:
 tuple_element:
     float_val
     {
-        Element element($1);
-        ($$) = element;
+
+        ($$) = Element($1);
     }
 
     | integer_val
     {
 
-         Element element($1);
-         ($$) = element;
+        ($$) = Element($1);
     }
 
     | string_val
     {
-          Element element($1);
-          ($$) = element;
+        ($$) = Element($1);
     }
 
 ;
