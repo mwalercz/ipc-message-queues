@@ -8,24 +8,24 @@
 
 [ \t\n\r]          // skip white space
 
-":"                 return Parser::DCOLON;
-","                 return Parser::COMA;
-"*"                 return Parser::STAR;
-"output"            return Parser::OUTPUT;
-"input"             return Parser::INPUT;
-"read"              return Parser::READ;
-"integer"           return Parser::INTEGER;
-"string"            return Parser::STRING;
-"float"             return Parser::FLOAT;
-[>=<]+              return Parser::SIGN;
-[0-9]+\.[0-9]?      return Parser::FLOAT_VAL;
-[0-9]+              return Parser::INTEGER_VAL;
-\"                  {
-                        more();
-                        begin(StartCondition__::string);
-                    }
-<string>\"          {
-                        begin(StartCondition__::INITIAL);
-                        return Parser::STRING_VAL;
-                    }
-<string>\\.|.       more();
+":"                     return Parser::DCOLON;
+","                     return Parser::COMA;
+"*"                     return Parser::STAR;
+"output"                return Parser::OUTPUT;
+"input"                 return Parser::INPUT;
+"read"                  return Parser::READ;
+"integer"               return Parser::INTEGER;
+"string"                return Parser::STRING;
+"float"                 return Parser::FLOAT;
+">"|">="|"="|"<="|"<"   return Parser::SIGN;
+[0-9]+\.[0-9]?          return Parser::FLOAT_VAL;
+[0-9]+                  return Parser::INTEGER_VAL;
+\"                      {
+                            more();
+                            begin(StartCondition__::string);
+                        }
+<string>\"              {
+                            begin(StartCondition__::INITIAL);
+                            return Parser::STRING_VAL;
+                        }
+<string>\\.|.           more();

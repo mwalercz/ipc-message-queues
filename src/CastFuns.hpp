@@ -2,8 +2,8 @@
 // Created by maciek on 29/05/16.
 //
 
-#ifndef QUEUES_HELPERFUNS_H
-#define QUEUES_HELPERFUNS_H
+#ifndef QUEUES_CASTFUNS_H
+#define QUEUES_CASTFUNS_H
 
 template<typename Derived, typename Base, typename Del>
 std::unique_ptr<Derived, Del>
@@ -24,5 +24,5 @@ dynamic_unique_ptr_cast( std::unique_ptr<Base, Del>&& p )
     return std::unique_ptr<Derived, Del>(nullptr, p.get_deleter());
 }
 
-#endif //QUEUES_HELPERFUNS_H
+#endif //QUEUES_CASTFUNS_H
 
