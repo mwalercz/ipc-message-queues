@@ -83,10 +83,6 @@ BOOST_AUTO_TEST_CASE(ParseTwoSimpleQueries) {
 
 }
 
-bool is_parsing_error(std::domain_error const &ex) {
-    return true;
-}
-
 BOOST_AUTO_TEST_CASE(ParseFails) {
     std::string in = "read integer:*, float :>8., string:=5";
     Parser parser;
