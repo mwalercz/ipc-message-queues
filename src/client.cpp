@@ -1,17 +1,33 @@
 #include "Queue.hpp"
+#include "LindaClient.hpp"
 #include <iostream>
 #include <unistd.h>
 
+
+
 int main() {
-  Queue q(1234);
-  q.init();
-  q.send(getpid(),"\
-Litwo, ojczyzno moja, ty jestes jak zdrowie \
-ile Cie trzeba cenic, ten tylko sie dowie, \
-kto Cie stracil",0);
-  q.send(getpid(),"Abc",200);
-  std::cout << q.clientRcv() << std::endl;
-  std::cout << q.clientRcv() << std::endl;
-  q.close();
+  //initialize queues
+  Queue qIn(1234);
+  qIn.init();
+  Queue qOut(1235);
+  qOut.init();
+  LindaClient client("./test_keys");
+
+  //initialize timeval
+  timeval tv;
+  tv.tv_sec=0;
+  tv.tv_usec = 0;
+
+  //Put dummy server response into in queue
+  qIn.clientSend("Dummy response", Queue::TIMEOUT);
+  std::cout << client.input("THERE BE QUERIES",tv) << std::endl;
+
+  //check what will server receive
+  std::cout << qOut.clientRcv() << std::endl;
+  // std::cout << q.clientRcv() << std::endl;
+
+  //cleanup
+  qIn.close();
+  qOut.close();
 }
 

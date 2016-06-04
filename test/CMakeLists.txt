@@ -8,6 +8,7 @@ add_definitions (-DBOOST_TEST_DYN_LINK)
 add_executable (TestElement test_element.cpp)
 add_executable (TestTuple test_tuple.cpp)
 add_executable (TestTupleMap test_tuple_map.cpp)
+add_executable (TestLindaClient test_linda_client.cpp)
 add_executable(TestParser test_parser.cpp ../src/CastFuns.hpp)
 add_executable(Test test.cpp)
 
@@ -24,6 +25,12 @@ target_link_libraries(TestParser
         ${Boost_SYSTEM_LIBRARY}
         ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
         )
+target_link_libraries(TestLindaClient
+        LindaClient
+        ${Boost_FILESYSTEM_LIBRARY}
+        ${Boost_SYSTEM_LIBRARY}
+        ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+        )
 
 target_link_libraries(test_links
                       INTERFACE
@@ -36,9 +43,11 @@ target_link_libraries(test_links
 target_link_libraries (TestElement test_links)
 target_link_libraries (TestTuple test_links)
 target_link_libraries (TestTupleMap test_links)
+target_link_libraries (TestLindaClient test_links)
 
 add_test (NAME TestElement COMMAND TestElement)
 add_test (NAME TestTuple COMMAND TestTuple)
 add_test (NAME TestTupleMap COMMAND TestTupleMap)
 add_test(NAME Test COMMAND Test)
 add_test(NAME TestParser COMMAND TestParser)
+add_test(NAME TestLindaClient COMMAND TestLindaClient)

@@ -14,6 +14,14 @@ void Queue::init() {
   }
 }
 
+void Queue::connect() {
+  pid = getpid();
+  int msgflg = 0666;
+  if((msqid = msgget(key, msgflg)) < 0) {
+    throw std::runtime_error("ERROR: Can't connect to queue");
+  }
+}
+
 void Queue::close() {
   msgctl( msqid, IPC_RMID, 0);
 }
@@ -64,13 +72,14 @@ std::string Queue::clientRcv() {
   if(msg.timeout==0)
     return clientRcvBody(msg.size);
   else if(msg.timeout<=errorMessages.size())
-    return errorMessages[msg.timeout+1];
+    return errorMessages[msg.timeout];
   else
-    throw std::runtime_error("ERROR: Wrong timeout value from server");
+    throw std::runtime_error("ERROR: Wrong timeout value from server: " + std::to_string(msg.timeout));
 }
 
 
 const std::vector<std::string> Queue::errorMessages = {
-    "TIMEOUT", //0
-    "PARSE ERROR" //1
+  "NONE", //never used
+  "TIMEOUT", //1
+  "PARSE ERROR" //2
 };
