@@ -9,7 +9,7 @@ add_executable (TestElement test_element.cpp)
 add_executable (TestTuple test_tuple.cpp)
 add_executable (TestTupleMap test_tuple_map.cpp)
 add_executable (TestLindaClient test_linda_client.cpp)
-add_executable(TestParser test_parser.cpp ../src/CastFuns.hpp)
+add_executable(TestParser test_parser.cpp)
 add_executable(Test test.cpp)
 
 add_library(test_links INTERFACE)

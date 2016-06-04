@@ -62,14 +62,6 @@ bool Tuple::operator==(const Tuple& other) const {
 
 
 
-void Tuple::swap(const Tuple &other) {
-    type_ = other.getType();
-    for (auto element : other.elements_){
-        elements_.push_back(element);
-    }
-
-}
-
 
 void TypeCalculator::calculate(const Element &element) {
     if (current_idx > 31){

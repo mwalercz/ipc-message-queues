@@ -12,8 +12,8 @@
 #undef Parser
 
 class Parser : public ParserBase {
-
 public:
+    Parser() = default;
     std::unique_ptr<Message> parse(const std::string &input,
                                    Time sendTime,
                                    TimeDuration timeout,
