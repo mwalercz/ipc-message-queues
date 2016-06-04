@@ -4,13 +4,19 @@
 #include <sys/ipc.h>
 #include <sys/msg.h>
 #include <string>
+#include <vector>
 
 
 class Queue{
 private:
+
+  
   const static int timeout = 500; //ms?
   const static int msgHeaderSize = 3*sizeof(int);
   //const static int msgBodySize = 1024;
+
+  const static std::vector<std::string> errorMessages;
+  
 
   struct MsgHeader {
     long mtype;
@@ -20,7 +26,7 @@ private:
   };
   struct MsgBody {
     long mtype;
-    char body[256];
+    char body[0];
   };
 
 
@@ -34,7 +40,12 @@ private:
   std::string clientRcvBody(int size);
 
 public:
-  Queue(key_t _key) : key(_key) {}
+  enum Error {
+    TIMEOUT=0,
+    PARSE=1
+  };
+
+  Queue(key_t _key) : key(_key) {init();}
   void init();
 
   //Destroys queue, run only on server exit!
@@ -45,8 +56,8 @@ public:
 
   void clientSend(const std::string &str) {send(pid,str,timeout);}
 
-  void sendTimeoutInfo(pid_t pid) {
-    sendHeader(pid,0,time(0),1); //timeout = 1
+  void sendErrorInfo(pid_t pid, Error err) {
+    sendHeader(pid,0,time(0),err);
   }
 
   std::string clientRcv();

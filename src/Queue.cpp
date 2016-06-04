@@ -63,8 +63,14 @@ std::string Queue::clientRcv() {
   MsgHeader msg = clientRcvHeader();
   if(msg.timeout==0)
     return clientRcvBody(msg.size);
-  else if(msg.timeout==1)
-    return "TIMEOUT";
+  else if(msg.timeout<=errorMessages.size())
+    return errorMessages[msg.timeout+1];
   else
-    throw std::runtime_error("ERROR: Wrong timeout value from server: (should be 0 or 1)");
+    throw std::runtime_error("ERROR: Wrong timeout value from server");
 }
+
+
+const std::vector<std::string> Queue::errorMessages = {
+    "TIMEOUT", //0
+    "PARSE ERROR" //1
+};
