@@ -75,11 +75,12 @@ BOOST_AUTO_TEST_CASE(ParseTwoSimpleQueries) {
 
     std::string in2 = "input float:>5., string:*";
     auto realQueryPtr2 = dynamic_unique_ptr_cast<Query>(parser.parse(in2, 1, 1, 1));
+    Query realQuery2 = *realQueryPtr2.get();
     Elements elements2;
     elements2.push_back(Element(float(6.0)));
     elements2.push_back(Element("\"Ala ma kota\""));
     Tuple expectedTuple2(elements2);
-    BOOST_CHECK(expectedTuple2.isMatch(*realQueryPtr2.get()));
+    BOOST_CHECK(expectedTuple2.isMatch(realQuery2));
 
 }
 
