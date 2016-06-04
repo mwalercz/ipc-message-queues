@@ -65,16 +65,6 @@ bool Tuple::operator==(const Tuple& other) const {
     return true;
 }
 
-
-
-void Tuple::swap(const Tuple &other) {
-    type_ = other.getType();
-    for (auto element : other.elements_){
-        elements_.push_back(element);
-    }
-
-}
-
 std::string Tuple::toString() const {
     std::stringstream ss;
     ss << "(" << std::fixed; // << std::setprecision(std::numeric_limits<long double>::digits10);
@@ -101,7 +91,6 @@ std::string Tuple::toString() const {
     output << tmp << ")";
     return output.str();
 }
-
 
 void TypeCalculator::calculate(const Element &element) {
     if (current_idx > 31){

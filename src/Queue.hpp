@@ -10,8 +10,6 @@
 class Queue{
 private:
 
-
-  const static int timeout = 500; //ms?
   const static int msgHeaderSize = 3*sizeof(int);
   //const static int msgBodySize = 1024;
 
@@ -40,13 +38,20 @@ private:
   std::string clientRcvBody(int size);
 
 public:
+  const static int timeout = 500; //ms?
   enum Error {
-    TIMEOUT=0,
-    PARSE=1
+    NONE=0,
+    TIMEOUT=1,
+    PARSE=2
   };
 
-  Queue(key_t _key) : key(_key) {init();}
+  Queue(key_t _key) : key(_key) {}
+
+  //Creates queue (server)
   void init();
+
+  //Connects to queue (client)
+  void connect();
 
   //Destroys queue, run only on server exit!
   void close();
@@ -54,7 +59,7 @@ public:
 
   void send(pid_t pid, const std::string &str, int timeout=0);
 
-  void clientSend(const std::string &str) {send(pid,str,timeout);}
+  void clientSend(const std::string &str,int timeout=timeout) {send(pid,str,timeout);}
 
   void sendErrorInfo(pid_t pid, Error err) {
     sendHeader(pid,0,time(0),err);

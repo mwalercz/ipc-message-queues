@@ -1,8 +1,6 @@
-# set(CMAKE_CXX_STANDARD 11)
-
-
-add_library(QueuesClient
+add_library(LindaClient
             Queue.cpp Queue.hpp
+            LindaClient.hpp
            )
 
 add_library(QueuesServ
@@ -19,6 +17,6 @@ add_executable(asd main.cpp)
 add_executable(client client.cpp)
 
 target_link_libraries(asd QueuesServ)
+target_link_libraries(client LindaClient)
 
 add_subdirectory(parser)
-target_link_libraries(client QueuesClient)

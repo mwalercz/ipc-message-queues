@@ -17,7 +17,6 @@ class Tuple {
         Type getType() const;
 
         bool operator==(const Tuple& other) const;
-        void swap(const Tuple& other);
 
         std::string toString() const;
 

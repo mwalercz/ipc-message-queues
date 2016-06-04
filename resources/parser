@@ -16,6 +16,7 @@
              Boolean: bool;
              Element: Element;
              Tuple: Tuple;
+             Query: Query;
              Comparison: Element::Comparison;
 
 %type <String> string_val
@@ -23,22 +24,28 @@
 %type <Float> float_val
 %type <Element> tuple_element
 %type <Tuple> tuple
+%type <Query> query
 %type <Boolean> query_head
 %type <Comparison> comparison
 
 %%
 message:
-    query_head parts
+    query
     {
-        this->result_ = std::move(std::unique_ptr<Message> (new Query(msgPid_, sendTime_, timeout_, typeCalculator_.getType(), queryParts_, $1)));
+        this->result_ = std::move(std::unique_ptr<Message> (new Query($1)));
     }
     | tuple
     {
         this->result_ = std::move(std::unique_ptr<Message> (new Output($1, msgPid_, sendTime_, timeout_)));
     }
-
 ;
 
+query:
+    query_head parts
+    {
+        $$ = Query(msgPid_, sendTime_, timeout_, typeCalculator_.getType(), queryParts_, $1);
+    }
+;
 
 query_head:
     INPUT
@@ -123,7 +130,7 @@ comparison:
 integer_val:
     INTEGER_VAL
     {
-        $$ = int(std::stoi(d_scanner_.matched()));
+        $$ = std::stoi(d_scanner_.matched());
     }
 ;
 
@@ -131,7 +138,7 @@ float_val:
     FLOAT_VAL
     {
 
-        $$ = float(std::stof(d_scanner_.matched()));
+        $$ = std::stof(d_scanner_.matched());
     }
 ;
 
@@ -145,8 +152,7 @@ string_val:
 tuple:
     tuple_head tuple_elements
     {
-        Tuple tuple(tupleElements_);
-        ($$).swap(tuple);
+        $$ = Tuple(tupleElements_);
     }
 
 
@@ -170,21 +176,18 @@ tuple_elements:
 tuple_element:
     float_val
     {
-        Element element($1);
-        ($$) = element;
+        $$ = Element($1);
     }
 
     | integer_val
     {
 
-         Element element($1);
-         ($$) = element;
+        $$ = Element($1);
     }
 
     | string_val
     {
-          Element element($1);
-          ($$) = element;
+        $$ = Element($1);
     }
 
 ;
