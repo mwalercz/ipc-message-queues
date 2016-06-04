@@ -6,7 +6,7 @@
 %x string
 %%
 
-[ \t\n\r]          // skip white space
+[ \t\n\r]               // skip white space
 
 ":"                     return Parser::DCOLON;
 ","                     return Parser::COMA;

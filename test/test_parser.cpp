@@ -98,6 +98,41 @@ BOOST_AUTO_TEST_CASE(ParseFails) {
     BOOST_CHECK_THROW(parser.parse(in_five, 1, 1, 1);, std::domain_error);
     std::string in_six = "output float:=5";
     BOOST_CHECK_THROW(parser.parse(in_six, 1, 1, 1);, std::domain_error);
-
-
 }
+
+
+BOOST_AUTO_TEST_CASE(ParseLongTuple) {
+    std::stringstream ss;
+    ss << "output ";
+    Elements elements;
+    for(int i = 0; i < 31; i++){
+        ss << " \"laba\", ";
+        elements.push_back(Element("\"laba\""));
+    }
+    ss << "\"end\"";
+    elements.push_back(Element("\"end\""));
+    Tuple expectedTuple(elements);
+
+    std::string in = ss.str();
+    Parser parser;
+    auto realOutputPtr = dynamic_unique_ptr_cast<Output>(parser.parse(in, 1, 2, 3));
+    Tuple realTuple= realOutputPtr.get()->getTuple();
+    BOOST_CHECK(realTuple == expectedTuple);
+}
+
+// parser throws domain_error when input is too long, greater then 32
+// here input has 33 elements
+BOOST_AUTO_TEST_CASE(ParseTooLongTuple) {
+    std::stringstream ss;
+    ss << "output ";
+    for(int i = 0; i < 32; i++){
+        ss << " \"laba\", ";
+    }
+    ss << "\"end\"";
+    std::string in = ss.str();
+    Parser parser;
+    BOOST_CHECK_THROW(parser.parse(in, 1, 2, 3);, std::domain_error);
+}
+
+
+

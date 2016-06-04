@@ -67,7 +67,7 @@ bool Tuple::operator==(const Tuple& other) const {
 
 std::string Tuple::toString() const {
     std::stringstream ss;
-    ss << "(" << std::fixed; // << std::setprecision(std::numeric_limits<long double>::digits10);
+    ss << std::fixed; // << std::setprecision(std::numeric_limits<long double>::digits10);
     for (auto i : elements_) {
         switch(i.getType()) {
             case Element::Type::kInt: {
@@ -80,7 +80,7 @@ std::string Tuple::toString() const {
                 break;
             }
             case Element::Type::kString: {
-                 ss << "\"" << *(i.getString()) << "\"" << ",";
+                 ss << *(i.getString())  << ",";
                 break;
             }
         }
@@ -88,7 +88,7 @@ std::string Tuple::toString() const {
     std::string tmp = ss.str();
     tmp.pop_back();
     std::stringstream output;
-    output << tmp << ")";
+    output << tmp;
     return output.str();
 }
 
