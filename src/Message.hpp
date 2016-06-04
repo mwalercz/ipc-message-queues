@@ -26,9 +26,9 @@ class Message { // abstract class
     public:
         Message(MsgPid pid, Time send_time, TimeDuration timeout,
                 Tuple::Type type);
+        Message() = default;
         virtual ~Message() {};
         virtual void accept(MessageVisitor& v) = 0;
-
         bool isExpired() const;
         MsgPid getPid() const;
         Tuple::Type getType() const;
@@ -71,6 +71,7 @@ class QueryPart {
 class Query : public Message {
     public:
         typedef std::vector<QueryPart> QueryParts;
+        Query() = default;
         Query(MsgPid pid, Time send_time, TimeDuration timeout,
               Tuple::Type type, bool read_only = true);
         Query(MsgPid pid, Time send_time, TimeDuration timeout,
@@ -79,7 +80,6 @@ class Query : public Message {
         virtual void accept(MessageVisitor& v);
         void appendPart(const QueryPart& q);
         QueryParts getParts() const;
-        Elements getElements() const;
         bool isReadOnly() const;
 
     private:

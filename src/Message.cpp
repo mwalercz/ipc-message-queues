@@ -63,6 +63,7 @@ Query::Query(MsgPid pid, Time send_time, TimeDuration timeout, Tuple::Type type,
 Query::Query(MsgPid pid, Time send_time, TimeDuration timeout, Tuple::Type type, bool read_only)
     : Message(pid, send_time, timeout, type), read_only_(read_only) {}
 
+
 void Query::accept(MessageVisitor& v) {
     v.visit(*this);
 }
@@ -79,17 +80,6 @@ Query::QueryParts Query::getParts() const {
     return parts_;
 }
 
-Elements Query::getElements() const {
-    Elements elements;
-    for(auto part: parts_){
-        elements.push_back(part.getElement());
-    }
-    return elements;
-}
-
-
-
-
 QueryPart::QueryPart(Length idx, const Element& reference_point,
     Element::Comparison expected) : idx_(idx),
     reference_point_(reference_point), expected_(expected) {}
@@ -97,7 +87,6 @@ QueryPart::QueryPart(Length idx, const Element& reference_point,
 Length QueryPart::getIdx() const {
     return idx_;
 }
-
 
 bool QueryPart::isMatch(const Element& element) const {
     return Element::fulfills(element.compare(reference_point_), expected_);
