@@ -78,4 +78,14 @@ BOOST_AUTO_TEST_CASE( TestTupleNoMatch )
     BOOST_CHECK(!t.isMatch(q));
 }
 
+BOOST_AUTO_TEST_CASE( TestTupleToString )
+{
+    Elements es1;
+    es1.push_back(Element(int(1234)));
+    es1.push_back(Element(float(1987.587646)));
+    es1.push_back(Element("aasdklfj.,haskdfu!"));
+    Tuple t = Tuple(es1);
+    BOOST_CHECK_EQUAL(t.toString(), "(1234,1987.587646,\"aasdklfj.,haskdfu!\")");
+}
+
 BOOST_AUTO_TEST_SUITE_END()

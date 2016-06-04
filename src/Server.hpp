@@ -7,6 +7,8 @@
 #include "TupleMap.hpp"
 #include "Message.hpp"
 #include "PendingQueries.hpp"
+#include "./parser/Parser.h"
+#include "Queue.hpp"
 
 // TODO
 // * Queue class
@@ -32,7 +34,7 @@ private:
 
 
     // FIXME
-    // Parser parser_;
+    Parser parser_;
     // Queue queue_out_;
     // Queue queue_in_;
     TupleMap tuples_;

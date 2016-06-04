@@ -8,16 +8,9 @@ add_definitions (-DBOOST_TEST_DYN_LINK)
 add_executable (TestElement test_element.cpp)
 add_executable (TestTuple test_tuple.cpp)
 add_executable (TestTupleMap test_tuple_map.cpp)
-add_executable(TestParser test_parser.cpp ../src/CastFuns.hpp)
-add_executable(Test test.cpp)
+add_executable (TestParser test_parser.cpp ../src/CastFuns.hpp)
 
 add_library(test_links INTERFACE)
-target_link_libraries(Test
-        QueuesServ
-        ${Boost_FILESYSTEM_LIBRARY}
-        ${Boost_SYSTEM_LIBRARY}
-        ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
-        )
 target_link_libraries(TestParser
         Parser
         ${Boost_FILESYSTEM_LIBRARY}
@@ -40,5 +33,4 @@ target_link_libraries (TestTupleMap test_links)
 add_test (NAME TestElement COMMAND TestElement)
 add_test (NAME TestTuple COMMAND TestTuple)
 add_test (NAME TestTupleMap COMMAND TestTupleMap)
-add_test(NAME Test COMMAND Test)
 add_test(NAME TestParser COMMAND TestParser)

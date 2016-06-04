@@ -2,6 +2,11 @@
 
 #include <stdexcept>
 #include <string>
+#include <sstream>
+#include <iostream>
+#include <iomanip>
+#include <cmath>
+#include <limits>
 #include <memory>
 
 #include "Message.hpp"
@@ -53,7 +58,7 @@ Tuple::Type Tuple::calculateType(const Elements& elements) {
 bool Tuple::operator==(const Tuple& other) const {
     if (type_ != other.getType())
         return false;
-    for (int i=0; i<elements_.size(); ++i) {
+    for (unsigned i=0; i<elements_.size(); ++i) {
         if (elements_[i] != other.elements_.at(i))
             return false;
     }
@@ -68,6 +73,33 @@ void Tuple::swap(const Tuple &other) {
         elements_.push_back(element);
     }
 
+}
+
+std::string Tuple::toString() const {
+    std::stringstream ss;
+    ss << "(" << std::fixed; // << std::setprecision(std::numeric_limits<long double>::digits10);
+    for (auto i : elements_) {
+        switch(i.getType()) {
+            case Element::Type::kInt: {
+                 ss << *(i.getInt()) << ",";
+                break;
+            }
+            case Element::Type::kFloat: {
+                std::cout << *(i.getFloat()) << std::endl;
+                 ss << *(i.getFloat()) << ",";
+                break;
+            }
+            case Element::Type::kString: {
+                 ss << "\"" << *(i.getString()) << "\"" << ",";
+                break;
+            }
+        }
+    }
+    std::string tmp = ss.str();
+    tmp.pop_back();
+    std::stringstream output;
+    output << tmp << ")";
+    return output.str();
 }
 
 
@@ -100,14 +132,3 @@ void TypeCalculator::reset() {
 }
 
 TypeCalculator::TypeCalculator() : type_(0), current_idx(0){}
-
-
-
-
-
-
-
-
-
-
-

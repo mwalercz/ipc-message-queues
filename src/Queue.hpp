@@ -10,13 +10,13 @@
 class Queue{
 private:
 
-  
+
   const static int timeout = 500; //ms?
   const static int msgHeaderSize = 3*sizeof(int);
   //const static int msgBodySize = 1024;
 
   const static std::vector<std::string> errorMessages;
-  
+
 
   struct MsgHeader {
     long mtype;

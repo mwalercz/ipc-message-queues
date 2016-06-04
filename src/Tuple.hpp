@@ -19,6 +19,8 @@ class Tuple {
         bool operator==(const Tuple& other) const;
         void swap(const Tuple& other);
 
+        std::string toString() const;
+
     private:
         static Type calculateType(const Elements& elements);
         Type type_;

@@ -5,12 +5,18 @@
 #include <functional>
 #include "Message.hpp"
 
+class PrioQueue : public std::priority_queue<Query, std::vector<Query>> {
+    public:
+        bool remove(const Tuple& value);
+};
+
 class PendingQueries {
     public:
-        typedef std::priority_queue<Query> Queries;
+        typedef PrioQueue Queries;
         void removeTimedoutQueries();
         Time getNextTimeout() const;
         void add(const Query& q);
+        bool remove(const Tuple& t);
     private:
         Queries queries_;
 };
