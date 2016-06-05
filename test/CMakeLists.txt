@@ -11,6 +11,7 @@ add_executable (TestTuple test_tuple.cpp)
 add_executable (TestTupleMap test_tuple_map.cpp)
 add_executable (TestLindaClient test_linda_client.cpp)
 add_executable (TestParser test_parser.cpp)
+add_executable (TestServerSink test_server_sink.cpp)
 
 add_library(test_links INTERFACE)
 target_link_libraries (TestParser
@@ -37,9 +38,11 @@ target_link_libraries (test_links
 target_link_libraries (TestElement test_links)
 target_link_libraries (TestTuple test_links)
 target_link_libraries (TestTupleMap test_links)
+target_link_libraries (TestServerSink test_links)
 
 add_test (NAME TestElement COMMAND TestElement)
 add_test (NAME TestTuple COMMAND TestTuple)
 add_test (NAME TestTupleMap COMMAND TestTupleMap)
 add_test (NAME TestParser COMMAND TestParser)
 add_test (NAME TestLindaClient COMMAND TestLindaClient)
+add_test (NAME TestServerSink COMMAND TestServerSink)

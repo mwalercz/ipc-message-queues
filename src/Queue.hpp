@@ -1,21 +1,13 @@
 #ifndef QUEUE_HPP
 #define QUEUE_HPP
-#include <sys/types.h>
+#include <string>
 #include <sys/ipc.h>
 #include <sys/msg.h>
-#include <string>
+#include <sys/types.h>
 #include <vector>
 
-
 class Queue{
-private:
-
-  const static int msgHeaderSize = 3*sizeof(int);
-  //const static int msgBodySize = 1024;
-
-  const static std::vector<std::string> errorMessages;
-
-
+protected:
   struct MsgHeader {
     long mtype;
     int size;
@@ -26,6 +18,13 @@ private:
     long mtype;
     char body[0];
   };
+
+private:
+  const static int msgHeaderSize = 3*sizeof(int);
+  //const static int msgBodySize = 1024;
+
+  const static std::vector<std::string> errorMessages;
+
 
 
   //Message queue id
@@ -56,7 +55,6 @@ public:
   //Destroys queue, run only on server exit!
   void close();
 
-
   void send(pid_t pid, const std::string &str, int timeout=0);
 
   void clientSend(const std::string &str,int timeout=timeout) {send(pid,str,timeout);}
@@ -66,7 +64,6 @@ public:
   }
 
   std::string clientRcv();
-  //TODO: Server receive -- Maciek K.?
 };
 
 #endif

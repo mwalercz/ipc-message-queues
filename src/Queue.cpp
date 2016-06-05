@@ -1,10 +1,9 @@
 #include "Queue.hpp"
+#include <cstring>
+#include <ctime>
 #include <iostream>
 #include <stdexcept>
 #include <unistd.h>
-#include <ctime>
-#include <cstring>
-
 
 void Queue::init() {
   pid = getpid();
@@ -40,9 +39,9 @@ void Queue::sendHeader(pid_t pid, int size, int time, int timeout) {
 void Queue::send(pid_t pid, const std::string &str, int timeout) {
   int msgSize = str.size() + 1; //null terminated C string (+1)
   sendHeader(pid,
-	     msgSize,
-	     time(0),
-	     timeout);
+         msgSize,
+         time(0),
+         timeout);
   //Send body
   MsgBody *msg = reinterpret_cast<MsgBody*>(malloc(sizeof(MsgBody)+msgSize));
   msg->mtype = pid;
@@ -83,3 +82,4 @@ const std::vector<std::string> Queue::errorMessages = {
   "TIMEOUT", //1
   "PARSE ERROR" //2
 };
+

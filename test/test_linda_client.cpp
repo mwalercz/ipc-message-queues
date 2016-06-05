@@ -3,6 +3,7 @@
 
 //using python object model:
 #define private public
+#define protected public
 
 #include "Queue.hpp"
 #include "LindaClient.hpp"

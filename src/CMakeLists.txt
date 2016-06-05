@@ -11,6 +11,7 @@ add_library(QueuesServ
             Message.cpp Message.hpp
             PendingQueries.cpp PendingQueries.hpp
             Queue.cpp Queue.hpp
+            ServerSink.cpp ServerSink.hpp
            )
 
 add_executable(asd main.cpp)
