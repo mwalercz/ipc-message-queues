@@ -8,27 +8,26 @@
 
 class Queue{
 protected:
+  static const int msgHeaderSize = 3*sizeof(int);
+
   struct MsgHeader {
     long mtype;
     int size;
     int time;
     int timeout;
   };
+
   struct MsgBody {
     long mtype;
     char body[0];
   };
 
-private:
-  const static int msgHeaderSize = 3*sizeof(int);
-  //const static int msgBodySize = 1024;
-
-  const static std::vector<std::string> errorMessages;
-
-
-
   //Message queue id
   int msqid;
+
+private:
+  const static std::vector<std::string> errorMessages;
+
   key_t key;
   pid_t pid;
 

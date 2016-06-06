@@ -17,7 +17,11 @@ bool PrioQueue::remove(const Tuple& value){
 }
 
 Time PendingQueries::getNextTimeout() const {
-    return queries_.top().getLeftTimeout();
+    if (queries_.empty()) {
+        return 0; // there is no pending queries
+    } else {
+        return queries_.top().getLeftTimeout();
+    }
 }
 
 void PendingQueries::add(const Query& q) {
