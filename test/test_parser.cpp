@@ -85,8 +85,8 @@ BOOST_AUTO_TEST_CASE(ParseTwoSimpleQueries) {
 }
 
 BOOST_AUTO_TEST_CASE(ParseFails) {
-    std::string in = "read integer:*, float :>8., string:=5";
     Parser parser;
+    std::string in = "read integer:*, float :>8., string:=5";
     BOOST_CHECK_THROW(parser.parse(in, 1, 1, 1);, std::domain_error);
     std::string in_two = "read integer:*, float :>8., string:5.1";
     BOOST_CHECK_THROW(parser.parse(in_two, 1, 1, 1);, std::domain_error);

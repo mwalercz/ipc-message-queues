@@ -85,11 +85,9 @@ std::string Tuple::toString() const {
             }
         }
     }
-    std::string tmp = ss.str();
-    tmp.pop_back();
-    std::stringstream output;
-    output << tmp;
-    return output.str();
+    std::string output = ss.str();
+    output.pop_back();
+    return output;
 }
 
 void TypeCalculator::calculate(const Element &element) {

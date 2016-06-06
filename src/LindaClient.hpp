@@ -3,33 +3,45 @@
 #include "Queue.hpp"
 #include <string>
 #include <fstream>
+#include <memory>
 
 class LindaClient {
 private:
-  Queue* queueIn;
-  Queue* queueOut;
+  std::unique_ptr<Queue> queueIn;
+  std::unique_ptr<Queue> queueOut;
 
+  struct Keys{
+        int inKey;
+        int outKey;
+  };
+
+  Keys readFromFile(const std::string& path){
+      std::ifstream file(path);
+      file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
+      Keys keys;
+      file >> keys.inKey;
+      file >> keys.outKey;
+      return keys;
+  }
   void init(const std::string& path) {
-    std::ifstream file;
-    file.open(path);
-    int inKey, outKey;
-    file >> inKey;
-    file >> outKey;
-    file.close();
-    queueIn = new Queue(inKey);
-    queueOut = new Queue(outKey);
-    queueIn->connect();
-    queueOut->connect();
-      
+    initQueues(readFromFile(path));
+  }
+
+  void initQueues(Keys keys){
+      queueIn = std::unique_ptr<Queue> (new Queue(keys.inKey));
+      queueOut = std::unique_ptr<Queue> (new Queue(keys.outKey));
+      queueIn->connect();
+      queueOut->connect();
   }
 
   std::string sendAndRcv(const std::string&  prefix, const std::string& query, timeval tv) {
     queueOut->clientSend(prefix + query, tv.tv_sec*1000+tv.tv_usec/1000);
     return queueIn->clientRcv();
   }
+
+
 public:
   LindaClient(const std::string& path) {init(path);}
-  ~LindaClient() {delete queueIn; delete queueOut;}
 
   std::string input(const std::string& query, timeval tv) {
     return sendAndRcv("input ", query, tv);
@@ -37,11 +49,11 @@ public:
   std::string read(const std::string& query, timeval tv) {
     return sendAndRcv("read ", query, tv);
   }
-  std::string output(const std::string& query) {
-    queueOut->clientSend("output " + query, Queue::timeout);
+  std::string output(const std::string& tuple) {
+    queueOut->clientSend("output " + tuple, Queue::timeout);
     return queueIn->clientRcv();
   }
-  
+
 };
 
 #endif
