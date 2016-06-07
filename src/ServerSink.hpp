@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <signal.h>
 #include <vector>
+#include <utility>
 
 #include "Queue.hpp"
 #include "PendingQueries.hpp"
@@ -16,8 +17,9 @@
 class ServerSink : public Queue {
    public:
     ServerSink(key_t key, const PendingQueries& pending_queries);
+    ~ServerSink();
     /** Collects message */
-    std::unique_ptr<std::string> recv();
+    std::unique_ptr<std::pair<Queue::MsgHeader, std::string>> recv();
 
    private:
     /** gets next header from queue
@@ -29,7 +31,8 @@ class ServerSink : public Queue {
     /** gets msg body
      *  doesn't block, returns null if there is no msg with type == pid
      */
-    std::unique_ptr<std::string> rcvBody(pid_t pid, int size);
+    std::unique_ptr<std::string> rcvBody(pid_t pid,
+                                                                      int size);
 
     /** SIGALRM handler */
     static void sig_alarm_handler(int signo);
