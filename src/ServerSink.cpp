@@ -25,6 +25,8 @@ void ServerSink::sig_alarm_handler(int signo) {
 
 ServerSink::ServerSink(key_t key, const PendingQueries& pending_queries)
     : Queue(key), pending_queries_(pending_queries) {
+    init();
+    std::cout << "WHATEVER!" << std::endl;
     // set up SIGALRM handler
     signal(SIGALRM, ServerSink::sig_alarm_handler);
 }
@@ -50,6 +52,29 @@ std::unique_ptr<std::pair<Queue::MsgHeader, std::string>> ServerSink::recv() {
     }
     return nullptr;
 }
+
+void ServerSink::send(pid_t pid, const std::string& msg) {
+}
+
+void ServerSink::sendWakeup(pid_t pid) {
+}
+
+void ServerSink::sendTimeout(pid_t pid) {
+}
+
+void ServerSink::init() {
+  pid = getpid();
+  int msgflg = IPC_CREAT | 0666;
+  if((msqid = msgget(key, msgflg)) < 0) {
+    throw std::runtime_error("ERROR: Can't open queue");
+  }
+  std::cout << "Init - key: " << key << " msqid: " << msqid << std::endl;
+}
+
+void ServerSink::close() {
+  msgctl( msqid, IPC_RMID, 0);
+}
+
 
 std::unique_ptr<Queue::MsgHeader> ServerSink::rcvHeader(unsigned timeout) {
     std::unique_ptr<MsgHeader> header(new MsgHeader);

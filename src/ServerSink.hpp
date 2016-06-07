@@ -17,11 +17,30 @@
 class ServerSink : public Queue {
    public:
     ServerSink(key_t key, const PendingQueries& pending_queries);
-    ~ServerSink();
-    /** Collects message */
+    virtual ~ServerSink();
+
+    /** Collects message
+     *  this is one iteration of message colletion
+     *  if no message is ready in this step nullptr is returned
+     */
     std::unique_ptr<std::pair<Queue::MsgHeader, std::string>> recv();
 
+    /** Sends message */
+    void send(pid_t pid, const std::string& msg);
+
+    /** Sends wakeup message */
+    void sendWakeup(pid_t pid);
+
+    /** Sends timeout message */
+    void sendTimeout(pid_t pid);
+
    private:
+    /** Creates queue */
+    void init();
+
+    /** Destroys queue */
+    void close();
+
     /** gets next header from queue
      *  blocks till header is received or the timeout is expired
      *  returns pointer to MsgHeader or nullptr if timeouted
@@ -31,8 +50,7 @@ class ServerSink : public Queue {
     /** gets msg body
      *  doesn't block, returns null if there is no msg with type == pid
      */
-    std::unique_ptr<std::string> rcvBody(pid_t pid,
-                                                                      int size);
+    std::unique_ptr<std::string> rcvBody(pid_t pid, int size);
 
     /** SIGALRM handler */
     static void sig_alarm_handler(int signo);

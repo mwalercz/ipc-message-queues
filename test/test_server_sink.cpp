@@ -26,15 +26,15 @@ BOOST_AUTO_TEST_SUITE(test_server_sink)
 BOOST_AUTO_TEST_CASE(ServerSinkRecv_simple) {
     PendingQueries pending;
     pending.add({303, 0, 5, 0x00, true});
-    int msqid = ftok(".", 0);
-    ServerSink s(msqid, pending);
-    s.init();
+    int qkey = ftok(".", 0);
+    ServerSink s(qkey, pending);
+    Queue client(qkey);
 
     std::vector<std::string> expected = {"test0", "1", "testtesttest2", "t3"};
 
     pid_t pid = 1;
     for (auto e : expected) {
-        s.send(pid, e, 1);
+        client.send(pid, e, 1);
         pid = ((pid+1) & 1) + 1;
     }
 
@@ -61,7 +61,7 @@ BOOST_AUTO_TEST_CASE(ServerSinkRcv) {
     pending.add({303, 0, 5, 0x00, true});
     int qkey = 1234;
     ServerSink s(qkey, pending);
-    s.init();
+    Queue client(qkey);
 
     std::vector<Queue::MsgHeader> expected = {
         {.mtype = 1, .size = 12, .time = 0, .timeout = 3},
@@ -94,7 +94,7 @@ BOOST_AUTO_TEST_CASE(ServerSinkRcvBody) {
     pending.add({303, 0, 5, 0x00, true});
     int qkey = 2021;
     ServerSink s(qkey, pending);
-    s.init();
+    Queue client(qkey);
 
     std::vector<std::string> expected = {
         "qwerty",
@@ -103,7 +103,7 @@ BOOST_AUTO_TEST_CASE(ServerSinkRcvBody) {
     };
     pid_t pid = 1;
     for (auto msg : expected) {
-        s.send(pid++, msg, 0);
+        client.send(pid++, msg, 0);
     }
 
     std::vector<std::unique_ptr<std::string>> output;
