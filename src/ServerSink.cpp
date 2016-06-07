@@ -1,6 +1,6 @@
 #include "ServerSink.hpp"
 
-#include <iostream>
+//#include <iostream>
 
 #include <cstring>
 #include <ctime>
@@ -15,7 +15,6 @@
 #include <signal.h>
 
 #include "Queue.hpp"
-#include "PendingQueries.hpp"
 
 volatile sig_atomic_t ServerSink::got_alarm_interrupt = 0;
 
@@ -25,10 +24,9 @@ void ServerSink::sig_alarm_handler(int signo) {
 
 ServerSink::ServerSink(key_t key, const PendingQueries& pending_queries)
     : Queue(key), pending_queries_(pending_queries) {
-    init();
-    std::cout << "WHATEVER!" << std::endl;
     // set up SIGALRM handler
     signal(SIGALRM, ServerSink::sig_alarm_handler);
+    init();
 }
 
 ServerSink::~ServerSink() {
@@ -54,12 +52,19 @@ std::unique_ptr<std::pair<Queue::MsgHeader, std::string>> ServerSink::recv() {
 }
 
 void ServerSink::send(pid_t pid, const std::string& msg) {
+    this->Queue::send(pid, msg, 0);
 }
 
 void ServerSink::sendWakeup(pid_t pid) {
+    sendErrorInfo(pid, Queue::Error::kOk);
 }
 
 void ServerSink::sendTimeout(pid_t pid) {
+    sendErrorInfo(pid, Queue::Error::kTimeout);
+}
+
+void ServerSink::sendParseError(pid_t pid) {
+    sendErrorInfo(pid, Queue::Error::kParseError);
 }
 
 void ServerSink::init() {
@@ -68,7 +73,6 @@ void ServerSink::init() {
   if((msqid = msgget(key, msgflg)) < 0) {
     throw std::runtime_error("ERROR: Can't open queue");
   }
-  std::cout << "Init - key: " << key << " msqid: " << msqid << std::endl;
 }
 
 void ServerSink::close() {

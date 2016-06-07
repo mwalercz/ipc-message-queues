@@ -13,11 +13,13 @@
 #include "Queue.hpp"
 #include "PendingQueries.hpp"
 
-
 class ServerSink : public Queue {
    public:
     ServerSink(key_t key, const PendingQueries& pending_queries);
     virtual ~ServerSink();
+
+    /** Creates queue */
+    void init();
 
     /** Collects message
      *  this is one iteration of message colletion
@@ -34,9 +36,10 @@ class ServerSink : public Queue {
     /** Sends timeout message */
     void sendTimeout(pid_t pid);
 
+    /** Sends parse error message */
+    void sendParseError(pid_t pid);
+
    private:
-    /** Creates queue */
-    void init();
 
     /** Destroys queue */
     void close();

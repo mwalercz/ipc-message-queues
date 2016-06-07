@@ -12,7 +12,7 @@
 #include <sys/msg.h>
 #include <sys/types.h>
 
-#include "Element.hpp"
+#include "Message.hpp"
 #include "PendingQueries.hpp"
 
 #define private public
@@ -29,6 +29,7 @@ BOOST_AUTO_TEST_CASE(ServerSinkRecv_simple) {
     int qkey = ftok(".", 0);
     ServerSink s(qkey, pending);
     Queue client(qkey);
+    client.connect();
 
     std::vector<std::string> expected = {"test0", "1", "testtesttest2", "t3"};
 
@@ -62,6 +63,7 @@ BOOST_AUTO_TEST_CASE(ServerSinkRcv) {
     int qkey = 1234;
     ServerSink s(qkey, pending);
     Queue client(qkey);
+    client.connect();
 
     std::vector<Queue::MsgHeader> expected = {
         {.mtype = 1, .size = 12, .time = 0, .timeout = 3},
@@ -95,6 +97,7 @@ BOOST_AUTO_TEST_CASE(ServerSinkRcvBody) {
     int qkey = 2021;
     ServerSink s(qkey, pending);
     Queue client(qkey);
+    client.connect();
 
     std::vector<std::string> expected = {
         "qwerty",
@@ -118,6 +121,166 @@ BOOST_AUTO_TEST_CASE(ServerSinkRcvBody) {
     BOOST_CHECK_EQUAL(*output[1], expected[1]);
     BOOST_REQUIRE(output[2] != nullptr);
     BOOST_CHECK_EQUAL(*output[2], expected[2]);
+}
+
+BOOST_AUTO_TEST_CASE(ServerSinkSend_simple) {
+    PendingQueries pending;
+    pending.add({303, 0, 5, 0x00, true});
+    int qkey = 2021;
+    ServerSink s(qkey, pending);
+    Queue client(qkey);
+    client.connect();
+
+    pid_t pid = 12;
+    std::string msg = "THEFMEUSSCKAINGGE";
+    client.pid = pid;
+    s.send(pid, msg);
+
+    BOOST_CHECK_EQUAL(client.clientRcv(), msg);
+}
+BOOST_AUTO_TEST_CASE(ServerSinkSend) {
+    PendingQueries pending;
+    pending.add({303, 0, 5, 0x00, true});
+    int qkey = 2021;
+    ServerSink s(qkey, pending);
+    Queue client(qkey);
+    client.connect();
+
+    std::vector<std::string> expected = {
+        "qwerty",
+        "whateverlonglongenouthtobelonglongandlongertheandendond",
+        "d",
+        "d",
+    };
+
+    pid_t pid = 1;
+    for (auto msg : expected) {
+        s.send(pid, msg);
+        pid = pid==1 ? 2 : 1;
+    }
+
+    std::vector<std::string> received;
+    for (auto msg : expected) {
+        client.pid=pid;
+        pid = pid==1 ? 2 : 1;
+        received.emplace_back(client.clientRcv());
+    }
+
+    BOOST_CHECK_EQUAL_COLLECTIONS(received.begin(), received.end(),
+                                  expected.begin(), expected.end());
+}
+
+BOOST_AUTO_TEST_CASE(ServerSinkSendWakeup) {
+    PendingQueries pending;
+    pending.add({303, 0, 5, 0x00, true});
+    int qkey = 2021;
+    ServerSink s(qkey, pending);
+    Queue client(qkey);
+    client.connect();
+
+
+    std::vector<std::string> expected = {
+        "OK",
+        "OK",
+        "OK",
+        "OK",
+        "OK",
+    };
+    pid_t pid = 1;
+    unsigned n[3] = {0xdeadbeef, 0, 0};
+    for (auto msg : expected) {
+        s.sendWakeup(pid);
+        n[pid] += 1;
+        pid = ((pid+1) & 1) + 1;
+    }
+
+    std::vector<std::string> received;
+    client.pid = 1;
+    for (unsigned i=n[1]; i--;) {
+        received.emplace_back(client.clientRcv());
+    }
+    client.pid = 2;
+    for (unsigned i=n[2]; i--;) {
+        received.emplace_back(client.clientRcv());
+    }
+
+    BOOST_CHECK_EQUAL_COLLECTIONS(received.begin(), received.end(),
+                                  expected.begin(), expected.end());
+}
+
+BOOST_AUTO_TEST_CASE(ServerSinkSendTimeout) {
+    PendingQueries pending;
+    pending.add({303, 0, 5, 0x00, true});
+    int qkey = 2021;
+    ServerSink s(qkey, pending);
+    Queue client(qkey);
+    client.connect();
+
+    std::vector<std::string> expected = {
+        "TIMEOUT",
+        "TIMEOUT",
+        "TIMEOUT",
+        "TIMEOUT",
+        "TIMEOUT",
+    };
+    pid_t pid = 1;
+    unsigned n[3] = {0xdeadbeef, 0, 0};
+    for (auto msg : expected) {
+        s.sendTimeout(pid);
+        n[pid] += 1;
+        pid = ((pid+1) & 1) + 1;
+    }
+
+    std::vector<std::string> received;
+    client.pid = 1;
+    for (unsigned i=n[1]; i--;) {
+        received.emplace_back(client.clientRcv());
+    }
+    client.pid = 2;
+    for (unsigned i=n[2]; i--;) {
+        received.emplace_back(client.clientRcv());
+    }
+
+    BOOST_CHECK_EQUAL_COLLECTIONS(received.begin(), received.end(),
+                                  expected.begin(), expected.end());
+}
+
+BOOST_AUTO_TEST_CASE(ServerSinkSendParseError) {
+    PendingQueries pending;
+    pending.add({303, 0, 5, 0x00, true});
+    int qkey = 2021;
+    ServerSink s(qkey, pending);
+    Queue client(qkey);
+    client.connect();
+
+
+    std::vector<std::string> expected = {
+        "PARSE ERROR",
+        "PARSE ERROR",
+        "PARSE ERROR",
+        "PARSE ERROR",
+        "PARSE ERROR",
+    };
+    pid_t pid = 1;
+    unsigned n[3] = {0xdeadbeef, 0, 0};
+    for (auto msg : expected) {
+        s.sendParseError(pid);
+        n[pid] += 1;
+        pid = ((pid+1) & 1) + 1;
+    }
+
+    std::vector<std::string> received;
+    client.pid = 1;
+    for (unsigned i=n[1]; i--;) {
+        received.emplace_back(client.clientRcv());
+    }
+    client.pid = 2;
+    for (unsigned i=n[2]; i--;) {
+        received.emplace_back(client.clientRcv());
+    }
+
+    BOOST_CHECK_EQUAL_COLLECTIONS(received.begin(), received.end(),
+                                  expected.begin(), expected.end());
 }
 
 BOOST_AUTO_TEST_SUITE_END()
