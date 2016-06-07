@@ -1,5 +1,7 @@
 #include "ServerSink.hpp"
 
+#include <iostream>
+
 #include <cstring>
 #include <ctime>
 #include <iostream>
@@ -27,11 +29,18 @@ ServerSink::ServerSink(key_t key, const PendingQueries& pending_queries)
     signal(SIGALRM, ServerSink::sig_alarm_handler);
 }
 
-std::unique_ptr<std::string> ServerSink::recv() {
-    for (auto header : headers_) {
-        std::unique_ptr<std::string> body(rcvBody(header.mtype, header.size));
+ServerSink::~ServerSink() {
+    if(msqid != -1) close();
+}
+
+std::unique_ptr<std::pair<Queue::MsgHeader, std::string>> ServerSink::recv() {
+    for (auto header = headers_.begin(); header != headers_.end(); ++header) {
+        std::unique_ptr<std::string> body(rcvBody(header->mtype, header->size));
         if(body) {
-            return body;
+            std::unique_ptr<std::pair<Queue::MsgHeader, std::string>> res(
+                new std::pair<Queue::MsgHeader, std::string>(*header, *body));
+            headers_.erase(header);
+            return res;
         }
     }
     std::unique_ptr<MsgHeader> new_header(

@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <cstring>
+#include <utility>
 
 #include <unistd.h>
 #include <sys/ipc.h>
@@ -29,17 +30,17 @@ BOOST_AUTO_TEST_CASE(ServerSinkRecv_simple) {
     ServerSink s(msqid, pending);
     s.init();
 
-    std::vector<std::string> expected = {"test0", "test1", "test2", "test3"};
+    std::vector<std::string> expected = {"test0", "1", "testtesttest2", "t3"};
 
     pid_t pid = 1;
     for (auto e : expected) {
         s.send(pid, e, 1);
-        pid=((pid+1)&1)+1;
+        pid = ((pid+1) & 1) + 1;
     }
 
-    std::vector<std::string> output;
-    std::unique_ptr<std::string> msg;
-    int n=3;
+    std::vector<std::pair<Queue::MsgHeader, std::string>> output;
+    std::unique_ptr<std::pair<Queue::MsgHeader, std::string>> msg;
+    std::size_t n=expected.size();
     while(n) {
         msg = s.recv();
         if(msg) {
@@ -47,10 +48,12 @@ BOOST_AUTO_TEST_CASE(ServerSinkRecv_simple) {
             --n;
         }
     }
-    s.close();
 
-    BOOST_CHECK_EQUAL_COLLECTIONS(output.begin(), output.end(),
-                                  expected.begin(), expected.end());
+    BOOST_CHECK_EQUAL(output[0].second, expected[0]);
+    BOOST_CHECK_EQUAL(output[1].second, expected[1]);
+    BOOST_CHECK_EQUAL(output[2].second, expected[2]);
+    BOOST_CHECK_EQUAL(output[3].second, expected[3]);
+
 }
 
 BOOST_AUTO_TEST_CASE(ServerSinkRcv) {
@@ -77,7 +80,6 @@ BOOST_AUTO_TEST_CASE(ServerSinkRcv) {
         output.emplace_back(s.rcvHeader(1));
     }
 
-    s.close();
     BOOST_REQUIRE(output[0] != nullptr);
     BOOST_CHECK(memcmp(output[0].get(), &expected[0], Queue::msgHeaderSize) == 0);
     BOOST_REQUIRE(output[1] != nullptr);
@@ -109,7 +111,6 @@ BOOST_AUTO_TEST_CASE(ServerSinkRcvBody) {
         std::unique_ptr<Queue::MsgHeader> h(s.rcvHeader(1));
         output.emplace_back(s.rcvBody(h->mtype, h->size));
     }
-    s.close();
 
     BOOST_REQUIRE(output[0] != nullptr);
     BOOST_CHECK_EQUAL(*output[0], expected[0]);

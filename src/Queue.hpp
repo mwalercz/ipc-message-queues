@@ -43,7 +43,7 @@ public:
     PARSE=2
   };
 
-  Queue(key_t _key) : key(_key) {}
+  Queue(key_t _key) : key(_key), msqid(-1) {}
 
   //Creates queue (server)
   void init();
