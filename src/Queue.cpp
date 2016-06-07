@@ -3,28 +3,21 @@
 #include <ctime>
 #include <iostream>
 #include <stdexcept>
-#include <unistd.h>
 
-void Queue::init() {
-  pid = getpid();
-  int msgflg = IPC_CREAT | 0666;
-  if((msqid = msgget(key, msgflg)) < 0) {
-    throw std::runtime_error("ERROR: Can't open queue");
-  }
-}
+#include <unistd.h>
+#include <sys/ipc.h>
+#include <sys/msg.h>
+#include <sys/types.h>
 
 void Queue::connect() {
   pid = getpid();
   int msgflg = 0666;
   if((msqid = msgget(key, msgflg)) < 0) {
+    std::cout << msqid << " errno: " << errno << std::endl;
+    std::cout << EACCES << " " << EEXIST << " " << ENOENT << " " << ENOMEM << " " << ENOSPC << std::endl;
     throw std::runtime_error("ERROR: Can't connect to queue");
   }
 }
-
-void Queue::close() {
-  msgctl( msqid, IPC_RMID, 0);
-}
-
 
 void Queue::sendHeader(pid_t pid, int size, int time, int timeout) {
   MsgHeader msg;

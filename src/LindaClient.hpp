@@ -30,8 +30,6 @@ private:
   void initQueues(Keys keys){
       queueIn = std::unique_ptr<Queue> (new Queue(keys.inKey));
       queueOut = std::unique_ptr<Queue> (new Queue(keys.outKey));
-      queueIn->connect();
-      queueOut->connect();
   }
 
   std::string sendAndRcv(const std::string&  prefix, const std::string& query, timeval tv) {

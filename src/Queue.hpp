@@ -24,12 +24,11 @@ protected:
 
   //Message queue id
   int msqid;
+  key_t key;
+  pid_t pid;
 
 private:
   const static std::vector<std::string> errorMessages;
-
-  key_t key;
-  pid_t pid;
 
   void sendHeader(pid_t pid, int size, int time, int timeout);
   MsgHeader clientRcvHeader();
@@ -43,16 +42,11 @@ public:
     PARSE=2
   };
 
-  Queue(key_t _key) : key(_key), msqid(-1) {}
-
-  //Creates queue (server)
-  void init();
+  Queue(key_t _key) : key(_key), msqid(-1) { connect(); }
+  virtual ~Queue() = default;
 
   //Connects to queue (client)
   void connect();
-
-  //Destroys queue, run only on server exit!
-  void close();
 
   void send(pid_t pid, const std::string &str, int timeout=0);
 
