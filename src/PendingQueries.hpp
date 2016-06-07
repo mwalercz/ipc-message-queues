@@ -13,7 +13,7 @@ class PrioQueue : public std::priority_queue<Query, std::vector<Query>> {
 class PendingQueries {
     public:
         typedef PrioQueue Queries;
-        void removeTimedoutQueries();
+        std::vector<MsgPid> removeTimedoutQueries();
         Time getNextTimeout() const;
         void add(const Query& q);
         bool remove(const Tuple& t);

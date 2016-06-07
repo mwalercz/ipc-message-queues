@@ -28,12 +28,13 @@ void PendingQueries::add(const Query& q) {
     queries_.push(q);
 }
 
-void PendingQueries::removeTimedoutQueries() {
+std::vector<MsgPid> PendingQueries::removeTimedoutQueries() {
+    std::vector<MsgPid> output;
     while(!queries_.empty() && queries_.top().isExpired()){
-        Query q = queries_.top();
+        output.push_back(queries_.top().getPid());
         queries_.pop();
-        // FIXME send information about timed out query ?
     }
+    return output;
 }
 
 bool PendingQueries::remove(const Tuple& t){
