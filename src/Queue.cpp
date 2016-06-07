@@ -1,4 +1,5 @@
 #include "Queue.hpp"
+
 #include <cstring>
 #include <ctime>
 #include <iostream>
@@ -46,7 +47,7 @@ void Queue::send(pid_t pid, const std::string &str, int timeout) {
 
 Queue::MsgHeader Queue::clientRcvHeader() {
   MsgHeader msg;
-  msgrcv(msqid,&msg,msgHeaderSize,pid,0);
+  msgrcv(msqid, &msg, msgHeaderSize, pid, 0);
   return msg;
 }
 
@@ -73,6 +74,7 @@ std::string Queue::clientRcv() {
 const std::vector<std::string> Queue::errorMessages = {
   "NONE", //never used
   "TIMEOUT", //1
-  "PARSE ERROR" //2
+  "PARSE ERROR", //2
+  "OK" //3
 };
 

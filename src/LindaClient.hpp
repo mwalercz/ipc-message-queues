@@ -1,9 +1,11 @@
 #ifndef LINDA_CLIENT_HPP
 #define LINDA_CLIENT_HPP
-#include "Queue.hpp"
+
 #include <string>
 #include <fstream>
 #include <memory>
+
+#include "Queue.hpp"
 
 class LindaClient {
 private:
@@ -30,6 +32,8 @@ private:
   void initQueues(Keys keys){
       queueIn = std::unique_ptr<Queue> (new Queue(keys.inKey));
       queueOut = std::unique_ptr<Queue> (new Queue(keys.outKey));
+      queueIn->connect();
+      queueOut->connect();
   }
 
   std::string sendAndRcv(const std::string&  prefix, const std::string& query, timeval tv) {

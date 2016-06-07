@@ -22,27 +22,30 @@ protected:
     char body[0];
   };
 
+  void sendHeader(pid_t pid, int size, int time, int timeout);
+
   //Message queue id
   int msqid;
   key_t key;
   pid_t pid;
 
-private:
-  const static std::vector<std::string> errorMessages;
 
-  void sendHeader(pid_t pid, int size, int time, int timeout);
+private:
+  static const std::vector<std::string> errorMessages;
+
   MsgHeader clientRcvHeader();
   std::string clientRcvBody(int size);
 
 public:
   const static int timeout = 500; //ms?
   enum Error {
-    NONE=0,
-    TIMEOUT=1,
-    PARSE=2
+    kNone=0,
+    kTimeout=1,
+    kParseError=2,
+    kOk=3
   };
 
-  Queue(key_t _key) : key(_key), msqid(-1) { connect(); }
+  Queue(key_t _key) : key(_key), msqid(-1) {}
   virtual ~Queue() = default;
 
   //Connects to queue (client)
