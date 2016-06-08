@@ -12,7 +12,7 @@
 #include "Element.hpp"
 #include "Message.hpp"
 
-Server::Server(std::string& keys_filename)
+Server::Server(const std::string& keys_filename)
     : pending_queries_() {
     key_t key_in = getKey(0);
     key_t key_out = getKey(1);
@@ -68,16 +68,14 @@ void Server::handleQuery(const Query& query) {
 }
 
 void Server::handleOutput(const Output& output) {
-    /* //FIXME
     UnqPtr<Query> query = pending_queries_.remove(output.getTuple());
     if (query) {
-        queue_out_->send(query.getPid(), output.getTuple().toString());
+        queue_out_->send(query->getPid(), output.getTuple().toString());
     }
     else {
         tuples_.insert(output.getTuple());
     }
     queue_out_->sendWakeup(output.getPid());
-    */
 }
 
 key_t getKey(int proj_id) {
