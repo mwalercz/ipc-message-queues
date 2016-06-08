@@ -16,7 +16,7 @@ using UnqPtr = std::unique_ptr<T>;
 
 class Server : MessageVisitor {
 public:
-    Server(std::string& keys_filename);
+    Server(const std::string& keys_filename);
     virtual ~Server() = default;
     virtual void visit(Output& output);
     virtual void visit(Query& query);
@@ -27,8 +27,8 @@ private:
     UnqPtr<Message> getCompletedMessage();
     void handleQuery(const Query& query);
     void handleOutput(const Output& output);
-    key_t getKey(int proj_id);
-    void save_keys(const std::string& filename, key_t in, key_t out);
+    static key_t getKey(int proj_id);
+    static void save_keys(const std::string& filename, key_t in, key_t out);
 
     PendingQueries pending_queries_;
     UnqPtr<ServerSink> queue_out_;

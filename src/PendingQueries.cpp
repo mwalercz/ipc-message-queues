@@ -1,18 +1,21 @@
 #include "PendingQueries.hpp"
-#include <algorithm>
 
-bool PrioQueue::remove(const Tuple& value){
-    auto it = std::find_if(this->c.begin(), this->c.end(), [&](const Query& q){
-            return value.isMatch(q);
-            });
-    // auto it = std::find(this->c.begin(), this->c.end(), value);
+#include <algorithm>
+#include <memory>
+
+#include "Message.hpp"
+
+std::unique_ptr<Query> PrioQueue::remove(const Tuple& value){
+    auto it = std::find_if(this->c.begin(), this->c.end(),
+                           [&](const Query& q) { return value.isMatch(q); });
     if (it != this->c.end()) {
+        std::unique_ptr<Query> query(new Query(*it));
         this->c.erase(it);
         std::make_heap(this->c.begin(), this->c.end(), this->comp);
-        return true;
+        return query;
     }
     else {
-        return false;
+        return nullptr;
     }
 }
 
@@ -37,6 +40,6 @@ std::vector<MsgPid> PendingQueries::removeTimedoutQueries() {
     return output;
 }
 
-bool PendingQueries::remove(const Tuple& t){
+std::unique_ptr<Query> PendingQueries::remove(const Tuple& t){
     return queries_.remove(t);
 }
