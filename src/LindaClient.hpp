@@ -51,9 +51,11 @@ public:
   std::string read(const std::string& query, timeval tv) {
     return sendAndRcv("read ", query, tv);
   }
-  std::string output(const std::string& tuple) {
+  void output(const std::string& tuple) {
     queueOut->clientSend("output " + tuple, Queue::timeout);
-    return queueIn->clientRcv();
+    std::string response = queueIn->clientRcv();
+    if(response!=Queue::errorMessages[Queue::Error::kOk])
+       throw std::runtime_error(response);
   }
 
 };

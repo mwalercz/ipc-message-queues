@@ -10,13 +10,16 @@
 #include <sys/msg.h>
 #include <sys/types.h>
 
+#include <errno.h>
+#include <string.h>
+
+#define ERRNO_CHECK 1
+
 void Queue::connect() {
   pid = getpid();
   int msgflg = 0666;
   if((msqid = msgget(key, msgflg)) < 0) {
-    std::cout << msqid << " errno: " << errno << std::endl;
-    std::cout << EACCES << " " << EEXIST << " " << ENOENT << " " << ENOMEM << " " << ENOSPC << std::endl;
-    throw std::runtime_error("ERROR: Can't connect to queue");
+    throw std::runtime_error("ERROR: Can't connect to queue -- " + std::string(strerror(errno)));
   }
 }
 
@@ -27,6 +30,8 @@ void Queue::sendHeader(pid_t pid, int size, int time, int timeout) {
   msg.time = time;
   msg.timeout = timeout;
   msgsnd(msqid,&msg,msgHeaderSize,0);
+  if(errno && ERRNO_CHECK)
+    throw std::runtime_error("ERROR: Can't send header -- " + std::string(strerror(errno)));
 }
 
 
@@ -43,11 +48,15 @@ void Queue::send(pid_t pid, const std::string &str, int timeout) {
 
   msgsnd(msqid,msg,str.size()+1,0);
   free(msg);
+  if(errno && ERRNO_CHECK)
+    throw std::runtime_error("ERROR: Can't send message body -- " + std::string(strerror(errno)));
 }
 
 Queue::MsgHeader Queue::clientRcvHeader() {
   MsgHeader msg;
   msgrcv(msqid, &msg, msgHeaderSize, pid, 0);
+  if(errno && ERRNO_CHECK)
+    throw std::runtime_error("ERROR: Can't receive header -- " + std::string(strerror(errno)));
   return msg;
 }
 
@@ -57,6 +66,8 @@ std::string Queue::clientRcvBody(int size) {
   msgrcv(msqid,msg,size,pid,0);
   std::string str(msg->body);
   free(msg);
+  if(errno && ERRNO_CHECK)
+    throw std::runtime_error("ERROR: Can't receive body -- " + std::string(strerror(errno)));
   return str;
 }
 

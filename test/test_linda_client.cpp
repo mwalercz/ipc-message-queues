@@ -2,6 +2,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include <fstream>
+#include <iostream>
 
 #include "Message.hpp"
 #include "PendingQueries.hpp"
@@ -12,6 +13,15 @@
 #include "Queue.hpp"
 #include "ServerSink.hpp"
 #include "LindaClient.hpp"
+BOOST_AUTO_TEST_CASE(LindaClientConnectFailure) {
+  std::ofstream file;
+  file.open("./test_keys");
+  file << 1234 << " " << 1235;
+  file.close();
+  
+  BOOST_CHECK_THROW(LindaClient("./test_keys"), std::runtime_error);
+}
+
 BOOST_AUTO_TEST_CASE(LindaClientRead) {
   std::ofstream file;
   file.open("./test_keys");
@@ -61,7 +71,7 @@ BOOST_AUTO_TEST_CASE(LindaClientInput) {
 
   std::string query = "THERE BE QUERIES";
   //Put dummy server response into in queue
-  qIn.clientSend("Dummy response", 0);
+  qIn.clientSend("Dummy response", Queue::Error::kOk);
   client.input(query,tv);
 
   //check what will server receive
@@ -91,7 +101,7 @@ BOOST_AUTO_TEST_CASE(LindaClientOutput) {
 
   std::string query = "THERE BE QUERIES";
   //Put dummy server response into in queue
-  qIn.clientSend("Dummy response", 0);
+  qIn.clientSend("Dummy response", Queue::Error::kOk);
   client.output(query);
 
   //check what will server receive
@@ -154,10 +164,9 @@ BOOST_AUTO_TEST_CASE(LindaClientParse) {
   //Put dummy server response into in queue
   qIn.clientSend("Dummy response", Queue::Error::kParseError);
 
-  std::string testStr =  client.input(query,tv);
+  BOOST_CHECK_THROW(client.output(query), std::runtime_error);
 
-  qOut.clientRcv();
+  BOOST_CHECK_THROW(qOut.clientRcv(), std::runtime_error);
   // std::cout << q.clientRcv() << std::endl;
 
-  BOOST_CHECK_EQUAL(Queue::errorMessages[Queue::Error::kParseError],testStr);
 }

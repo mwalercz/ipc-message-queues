@@ -32,12 +32,11 @@ protected:
 
 
 private:
-  static const std::vector<std::string> errorMessages;
-
   MsgHeader clientRcvHeader();
   std::string clientRcvBody(int size);
 
 public:
+  static const std::vector<std::string> errorMessages;
   const static int timeout = 500; //ms?
   enum Error {
     kNone=0,
