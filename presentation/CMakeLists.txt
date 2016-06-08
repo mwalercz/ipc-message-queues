@@ -13,3 +13,4 @@ add_library(LindaClient
 
 add_subdirectory(one_producer_one_consumer)
 add_subdirectory(one_producer_more_consumers)
+add_subdirectory(two_producers_two_consumers_massive)

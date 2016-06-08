@@ -9,7 +9,10 @@ int main() {
     std::cout << "Producer\n";
     LindaClient client("/tmp/queues_keys");
 
-    std::string tupleExpected = "1, 3.1, \"linda\"";
-    client.output(tupleExpected);
-    std::cout << "Sent tuple: " << tupleExpected;
+    for (int i = 0; i < 100; ++i) {
+        std::string tuple = "1, 3.1, \"linda\"";
+        client.output(tuple);
+        std::cout << "Sent tuple: " << tuple;
+    }
+
 }

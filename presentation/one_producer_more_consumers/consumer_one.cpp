@@ -8,7 +8,7 @@ int main() {
 
     LindaClient client("/tmp/queues_keys");
     timeval tv;
-    tv.tv_sec = 10;
+    tv.tv_sec = 1;
     tv.tv_usec = 0;
 
     std::string query = "integer:=1, float:>3., string:=\"linda\"";
