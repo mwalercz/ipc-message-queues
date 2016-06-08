@@ -12,7 +12,6 @@
 #include "Queue.hpp"
 #include "ServerSink.hpp"
 #include "LindaClient.hpp"
-/* FIXME it doesn't compile, linkers errors :(
 BOOST_AUTO_TEST_CASE(LindaClientRead) {
   std::ofstream file;
   file.open("./test_keys");
@@ -122,7 +121,7 @@ BOOST_AUTO_TEST_CASE(LindaClientTimeout) {
 
   std::string query = "THERE BE QUERIES";
   //Put dummy server response into in queue
-  qIn.clientSend("Dummy response", Queue::TIMEOUT);
+  qIn.clientSend("Dummy response", Queue::Error::kTimeout);
 
   //check what will client receive (timeout)
   std::string testStr =  client.input(query,tv);
@@ -131,7 +130,7 @@ BOOST_AUTO_TEST_CASE(LindaClientTimeout) {
   qOut.clientRcv();
   // std::cout << q.clientRcv() << std::endl;
 
-  BOOST_CHECK_EQUAL(Queue::errorMessages[Queue::TIMEOUT],testStr);
+  BOOST_CHECK_EQUAL(Queue::errorMessages[Queue::Error::kTimeout],testStr);
 }
 
 BOOST_AUTO_TEST_CASE(LindaClientParse) {
@@ -153,13 +152,12 @@ BOOST_AUTO_TEST_CASE(LindaClientParse) {
 
   std::string query = "THERE BE QUERIES";
   //Put dummy server response into in queue
-  qIn.clientSend("Dummy response", Queue::PARSE);
+  qIn.clientSend("Dummy response", Queue::Error::kParseError);
 
   std::string testStr =  client.input(query,tv);
 
   qOut.clientRcv();
   // std::cout << q.clientRcv() << std::endl;
 
-  BOOST_CHECK_EQUAL(Queue::errorMessages[Queue::PARSE],testStr);
+  BOOST_CHECK_EQUAL(Queue::errorMessages[Queue::Error::kParseError],testStr);
 }
-*/

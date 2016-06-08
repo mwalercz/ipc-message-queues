@@ -7,15 +7,16 @@
 #include <vector>
 
 class Queue{
-protected:
-  static const int msgHeaderSize = 3*sizeof(int);
-
+public:
   struct MsgHeader {
     long mtype;
     int size;
     int time;
     int timeout;
   };
+protected:
+  static const int msgHeaderSize = 3*sizeof(int);
+
 
   struct MsgBody {
     long mtype;

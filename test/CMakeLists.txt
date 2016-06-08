@@ -22,6 +22,7 @@ target_link_libraries (TestParser
         )
 target_link_libraries (TestLindaClient
         LindaClient
+        QueuesServ
         ${Boost_FILESYSTEM_LIBRARY}
         ${Boost_SYSTEM_LIBRARY}
         ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
@@ -38,6 +39,7 @@ target_link_libraries (test_links
 target_link_libraries (TestElement test_links)
 target_link_libraries (TestTuple test_links)
 target_link_libraries (TestTupleMap test_links)
+target_link_libraries (TestLindaClient test_links)
 target_link_libraries (TestServerSink test_links)
 
 add_test (NAME TestElement COMMAND TestElement)

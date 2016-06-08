@@ -7,39 +7,34 @@
 #include "TupleMap.hpp"
 #include "Message.hpp"
 #include "PendingQueries.hpp"
+#include "ServerSink.hpp"
 #include "./parser/Parser.h"
 #include "Queue.hpp"
 
-// TODO
-// * Queue class
-// * storing unfinished messages
-// * getting last message
-//
 template <typename T>
 using UnqPtr = std::unique_ptr<T>;
 
 class Server : MessageVisitor {
 public:
-    Server();
-    virtual ~Server();
+    Server(std::string& keys_filename);
+    virtual ~Server() = default;
     virtual void visit(Output& output);
     virtual void visit(Query& query);
 
     void serve();
+
 private:
     UnqPtr<Message> getCompletedMessage();
     void handleQuery(const Query& query);
     void handleOutput(const Output& output);
-    void addToPendingQueries(const Query& query);
+    key_t getKey(int proj_id);
+    void save_keys(const std::string& filename, key_t in, key_t out);
 
-
-    // FIXME
-    Parser parser_;
-    // Queue queue_out_;
-    // Queue queue_in_;
-    TupleMap tuples_;
     PendingQueries pending_queries_;
-
+    UnqPtr<ServerSink> queue_out_;
+    UnqPtr<ServerSink> queue_in_;
+    TupleMap tuples_;
+    Parser parser_;
 };
 
 template <typename T, typename S>

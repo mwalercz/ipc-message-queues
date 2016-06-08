@@ -2,38 +2,45 @@
 
 #include <map>
 #include <memory>
+#include <stdexcept>
+#include <string>
+#include <fstream>
+
+#include <sys/types.h>
+#include <sys/ipc.h>
 
 #include "Element.hpp"
 #include "Message.hpp"
 
-Server::Server() {
-    //FIXME
+Server::Server(std::string& keys_filename)
+    : pending_queries_() {
+    key_t key_in = getKey(0);
+    key_t key_out = getKey(1);
+    save_keys(keys_filename, key_in, key_out);
 }
 
-Server::~Server() {
-    //FIXME
-}
-
-// FIXME
 void Server::serve() {
-    /* Time timeout;
      while (1) {
-        pending_queries_.removeTimedoutQueries();  // i.a. sends wakeup msgs to authors
-        timeout = pending_queries_.getNextTimeout();  // shortest timeout in pending queries
-        msg_part = queue_in_.recv(timeout);  // block if nothing in the queue
-        if (!msg_part) {  // woke up by timer
-            continue;
-        }
-        //FIXME
-        process_msg_part(msg_part);
-        if (any_msg_complete()) {
-            UnqPtr<Message> parsed_msg = parser_.parse(getCompletedMessage());
-            if (parsed_msg->isExpired()) {
-                queue_out_.sendErrorInfo(parsed_msg->getPid(), Queue::Error::TIMEOUT);
-            }
-            parsed_msg->accept(*this);
-        }
-    } */
+         std::vector<MsgPid> timeouted = pending_queries_.removeTimedoutQueries();
+         for (auto pid : timeouted) {
+            queue_out_->sendTimeout(pid);
+         }
+         std::unique_ptr<std::pair<Queue::MsgHeader, std::string>> raw_data;
+         raw_data = queue_in_->recv();
+         if (raw_data) {
+             Queue::MsgHeader header = raw_data->first;
+             std::string raw_string = raw_data->second;
+             try {
+                 std::unique_ptr<Message> msg =
+                     parser_.parse(raw_string, header.time, header.timeout,
+                                   static_cast<unsigned>(header.mtype));
+             } catch (std::runtime_error& e) {
+                queue_out_->sendParseError(header.mtype);
+             }
+         } else {
+             throw std::runtime_error("Parser returned nullptr");
+         }
+    }
 }
 
 void Server::visit(Output& output) {
@@ -52,23 +59,38 @@ void Server::handleQuery(const Query& query) {
         result = tuples_.fetch(query);
     }
 
-    if (!result) {
+    if (result) {
+        queue_out_->send(query.getPid(), result->toString());
+    } else {
         pending_queries_.add(query);
-        return;
     }
-    // FIXME
-    // queue_out_.send(query.getPid(), result);
 }
 
 void Server::handleOutput(const Output& output) {
     /* //FIXME
-    //remove timed out queries and try to match pending query
-    if(pending_queries_.remove(output.getTuple())){
-        queue_out_.send(output.getPid(), output.getTuple().toString());
+    UnqPtr<Query> query = pending_queries_.remove(output.getTuple());
+    if (query) {
+        queue_out_->send(query.getPid(), output.getTuple().toString());
     }
     else {
         tuples_.insert(output.getTuple());
-    } */
+    }
+    queue_out_->sendWakeup(output.getPid());
+    */
+}
+
+key_t getKey(int proj_id) {
+    key_t key = ftok(".", proj_id);
+    if (key < 0) {
+        throw std::runtime_error("Failed to get new key: " +
+                                 std::to_string(errno));
+    }
+    return key;
+}
+
+void save_keys(const std::string& filename, key_t in, key_t out) {
+    std::ofstream ofs(filename);
+    ofs << in << " " << out << std::endl;
 }
 
 template <typename T, typename S>
