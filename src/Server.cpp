@@ -34,6 +34,7 @@ void Server::serve() {
                  std::unique_ptr<Message> msg =
                      parser_.parse(raw_string, header.time, header.timeout,
                                    static_cast<unsigned>(header.mtype));
+                 msg->accept(*this);
              } catch (std::runtime_error& e) {
                 queue_out_->sendParseError(header.mtype);
              }
