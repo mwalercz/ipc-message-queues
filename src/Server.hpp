@@ -24,7 +24,6 @@ public:
     void serve();
 
 private:
-    UnqPtr<Message> getCompletedMessage();
     void handleQuery(const Query& query);
     void handleOutput(const Output& output);
     static key_t getKey(int proj_id);

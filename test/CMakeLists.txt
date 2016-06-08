@@ -37,12 +37,20 @@ target_link_libraries (test_links
         ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
         )
 
+target_link_libraries (TestServer
+        QueuesServ
+        Parser
+        ${Boost_FILESYSTEM_LIBRARY}
+        ${Boost_SYSTEM_LIBRARY}
+        ${Boost_UNIT_TEST_FRAMEWORK_LIBRARY}
+        )
+
 target_link_libraries (TestElement test_links)
 target_link_libraries (TestTuple test_links)
 target_link_libraries (TestTupleMap test_links)
 target_link_libraries (TestLindaClient test_links)
 target_link_libraries (TestServerSink test_links)
-target_link_libraries (TestServer test_links)
+
 
 add_test (NAME TestElement COMMAND TestElement)
 add_test (NAME TestTuple COMMAND TestTuple)

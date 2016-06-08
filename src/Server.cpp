@@ -78,7 +78,7 @@ void Server::handleOutput(const Output& output) {
     queue_out_->sendWakeup(output.getPid());
 }
 
-key_t getKey(int proj_id) {
+key_t Server::getKey(int proj_id) {
     key_t key = ftok(".", proj_id);
     if (key < 0) {
         throw std::runtime_error("Failed to get new key: " +
@@ -87,7 +87,7 @@ key_t getKey(int proj_id) {
     return key;
 }
 
-void save_keys(const std::string& filename, key_t in, key_t out) {
+void Server::save_keys(const std::string& filename, key_t in, key_t out) {
     std::ofstream ofs(filename);
     ofs << in << " " << out << std::endl;
 }
