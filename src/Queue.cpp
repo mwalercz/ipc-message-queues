@@ -45,9 +45,10 @@ void Queue::send(pid_t pid, const std::string &str, int timeout) {
   std::strcpy(msg->body, str.c_str());
 
   int ret = msgsnd(msqid,msg,str.size()+1,0);
+  int tmp_errno = errno;
   free(msg);
   if(ret==-1)
-    throw std::runtime_error("ERROR: Can't send message body -- " + std::string(strerror(errno)));
+    throw std::runtime_error("ERROR: Can't send message body -- " + std::string(strerror(tmp_errno)));
 }
 
 Queue::MsgHeader Queue::clientRcvHeader() {
@@ -62,10 +63,11 @@ std::string Queue::clientRcvBody(int size) {
   MsgBody *msg = reinterpret_cast<MsgBody*>(malloc(sizeof(MsgBody)+size));
 
   int ret = msgrcv(msqid,msg,size,pid,0);
+  int tmp_errno = errno;
   std::string str(msg->body);
   free(msg);
   if(ret==-1)
-    throw std::runtime_error("ERROR: Can't receive body -- " + std::string(strerror(errno)));
+    throw std::runtime_error("ERROR: Can't receive body -- " + std::string(strerror(tmp_errno)));
   return str;
 }
 
