@@ -98,6 +98,20 @@ BOOST_AUTO_TEST_CASE(ParseFails) {
     BOOST_CHECK_THROW(parser.parse(in_five, 1, 1, 1);, std::domain_error);
     std::string in_six = "output float:=5";
     BOOST_CHECK_THROW(parser.parse(in_six, 1, 1, 1);, std::domain_error);
+    std::string in_seven = "uhaha";
+    BOOST_CHECK_THROW(parser.parse(in_seven, 1, 1, 1);, std::domain_error);
+
+    //checking if parser can recover after errors
+    std::string in_eight = "output 6, 8.0, \"jacek-placek i janek,.\", 12";
+    auto realOutputPtr = dynamic_unique_ptr_cast<Output>(parser.parse(in_eight, 1, 1, 1));
+    Tuple realTuple = realOutputPtr.get()->getTuple();
+    Elements elements;
+    elements.push_back(Element(6));
+    elements.push_back(Element(float(8.0)));
+    elements.push_back(Element("\"jacek-placek i janek,.\""));
+    elements.push_back(Element(12));
+    Tuple expectedTuple(elements);
+    BOOST_CHECK(expectedTuple == realTuple);
 }
 
 
@@ -132,6 +146,19 @@ BOOST_AUTO_TEST_CASE(ParseTooLongTuple) {
     std::string in = ss.str();
     Parser parser;
     BOOST_CHECK_THROW(parser.parse(in, 1, 2, 3);, std::domain_error);
+
+
+    //checking if parser can recover after errors
+    std::string in_eight = "output 6, 8.0, \"jacek-placek i janek,.\", 12";
+    auto realOutputPtr = dynamic_unique_ptr_cast<Output>(parser.parse(in_eight, 1, 1, 1));
+    Tuple realTuple = realOutputPtr.get()->getTuple();
+    Elements elements;
+    elements.push_back(Element(6));
+    elements.push_back(Element(float(8.0)));
+    elements.push_back(Element("\"jacek-placek i janek,.\""));
+    elements.push_back(Element(12));
+    Tuple expectedTuple(elements);
+    BOOST_CHECK(expectedTuple == realTuple);
 }
 
 
