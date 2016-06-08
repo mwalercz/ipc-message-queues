@@ -14,6 +14,8 @@
 class Parser : public ParserBase {
 public:
     Parser() = default;
+
+    // Throws std::domain_error when input is too long, and when input string cannot be parsed
     std::unique_ptr<Message> parse(const std::string &input,
                                    Time sendTime,
                                    TimeDuration timeout,

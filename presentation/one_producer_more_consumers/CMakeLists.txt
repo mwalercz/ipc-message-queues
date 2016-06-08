@@ -1,5 +1,10 @@
-add_executable(consumer_2 consumer.cpp)
-add_executable(producer_2 producer.cpp)
+add_executable(t2_consumer_one consumer_one.cpp)
+add_executable(t2_consumer_two consumer_two.cpp)
+add_executable(t2_consumer_three consumer_three.cpp)
+add_executable(t2_producer producer.cpp)
 
-target_link_libraries(consumer_2 LindaClient)
-target_link_libraries(producer_2 LindaClient)
+target_link_libraries(t2_consumer_one LindaClient)
+target_link_libraries(t2_consumer_two LindaClient)
+target_link_libraries(t2_consumer_three LindaClient)
+
+target_link_libraries(t2_producer LindaClient)
