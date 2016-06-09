@@ -8,19 +8,30 @@
 
 #include <sys/types.h>
 #include <sys/ipc.h>
+#include <signal.h>
 
 #include "Element.hpp"
 #include "Message.hpp"
+#include "./parser/Parser.h"
+#include "ServerSink.hpp"
+
+sig_atomic_t Server::running = 1;
+void Server::sigint_handler(int signo) {
+    Server::running = 0;
+}
 
 Server::Server(const std::string& keys_filename)
     : pending_queries_() {
     key_t key_in = getKey(0);
     key_t key_out = getKey(1);
+    queue_in_ = std::move(UnqPtr<ServerSink>(new ServerSink(key_in, pending_queries_)));
+    queue_out_ = std::move(UnqPtr<ServerSink>(new ServerSink(key_out, pending_queries_)));
     save_keys(keys_filename, key_in, key_out);
+    signal(SIGINT, Server::sigint_handler);
 }
 
 void Server::serve() {
-     while (1) {
+     while (running) {
          std::vector<MsgPid> timeouted = pending_queries_.removeTimedoutQueries();
          for (auto pid : timeouted) {
             queue_out_->sendTimeout(pid);

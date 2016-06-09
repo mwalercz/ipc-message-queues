@@ -12,12 +12,15 @@ add_library(QueuesServ
             PendingQueries.cpp PendingQueries.hpp
             Queue.cpp Queue.hpp
             ServerSink.cpp ServerSink.hpp
+            Server.cpp Server.hpp
            )
 
 add_executable(asd main.cpp)
 add_executable(client client.cpp)
+add_executable(server_service server_service.cpp)
 
 target_link_libraries(asd QueuesServ)
 target_link_libraries(client LindaClient)
+target_link_libraries(server_service QueuesServ Parser)
 
 add_subdirectory(parser)
