@@ -1,10 +1,8 @@
-add_executable(t2_server server.cpp)
 add_executable(t2_consumer_one consumer_one.cpp)
 add_executable(t2_consumer_two consumer_two.cpp)
 add_executable(t2_consumer_three consumer_three.cpp)
 add_executable(t2_producer producer.cpp)
 
-target_link_libraries(t2_server Server)
 target_link_libraries(t2_consumer_one LindaClient)
 target_link_libraries(t2_consumer_two LindaClient)
 target_link_libraries(t2_consumer_three LindaClient)
