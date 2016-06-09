@@ -17,7 +17,7 @@ Time Message::getEstimatedTimeout() const {
 
 bool Message::compareTimes(Time l, Time r) const {
     double diff = std::difftime(l, r);
-    if (diff < 0 ) {
+    if (diff <= 0 ) {
         return true;
     }
     return false;
