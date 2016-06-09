@@ -21,8 +21,8 @@ private:
       std::ifstream file(path);
       file.exceptions(std::ifstream::failbit | std::ifstream::badbit);
       Keys keys;
-      file >> keys.inKey;
       file >> keys.outKey;
+      file >> keys.inKey;
       return keys;
   }
   void init(const std::string& path) {
