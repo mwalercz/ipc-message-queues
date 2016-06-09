@@ -24,7 +24,8 @@ inline void Parser::exceptionHandler__(std::exception const &exc) {
 
 int Parser::prepareAndParse(const std::string& input) {
     std::stringstream in(input);
-    switchInputStream(in);
+    std::stringstream out;
+    switchInputStream(in, out);
     prepareObjects();
     return parse();
 }
@@ -49,8 +50,8 @@ void Parser::prepareObjects() {
     queryParts_.clear();
 }
 
-void Parser::switchInputStream(std::istream &in) {
-    d_scanner_.switchStreams(in);
+void Parser::switchInputStream(std::istream &in, std::ostream &out) {
+    d_scanner_.switchStreams(in, out);
 }
 
 

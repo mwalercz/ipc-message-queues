@@ -43,7 +43,7 @@ private:
     void exceptionHandler__(std::exception const &exc);
     void prepareObjects();
     void initVariables(Time sendTime, TimeDuration timeout, MsgPid msgPid);
-    void switchInputStream(std::istream &in);
+    void switchInputStream(std::istream &in, std::ostream &out);
     int prepareAndParse(const std::string &input);
 
 };
