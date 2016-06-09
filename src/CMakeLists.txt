@@ -19,7 +19,7 @@ add_executable(asd main.cpp)
 add_executable(client client.cpp)
 add_executable(server_service server_service.cpp)
 
-target_link_libraries(asd QueuesServ)
+target_link_libraries(asd QueuesServ Parser)
 target_link_libraries(client LindaClient)
 target_link_libraries(server_service QueuesServ Parser)
 
