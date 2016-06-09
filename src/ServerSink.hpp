@@ -48,7 +48,7 @@ class ServerSink : public Queue {
      *  blocks till header is received or the timeout is expired
      *  returns pointer to MsgHeader or nullptr if timeouted
      */
-    std::unique_ptr<MsgHeader> rcvHeader(unsigned timeout);
+    std::unique_ptr<MsgHeader> rcvHeader();
 
     /** gets msg body
      *  doesn't block, returns null if there is no msg with type == pid
@@ -58,7 +58,7 @@ class ServerSink : public Queue {
     /** waits for anything in queue
      *  return false if timeouted
      */
-    bool checkQueue();
+    bool checkQueue(unsigned timeout);
 
     /** SIGALRM handler */
     static void sig_alarm_handler(int signo);

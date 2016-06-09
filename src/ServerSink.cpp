@@ -13,6 +13,7 @@
 #include <sys/msg.h>
 #include <sys/types.h>
 #include <signal.h>
+#include <string.h>
 
 #include "Queue.hpp"
 
@@ -34,6 +35,10 @@ ServerSink::~ServerSink() {
 }
 
 std::unique_ptr<std::pair<Queue::MsgHeader, std::string>> ServerSink::recv() {
+    bool any_thing_in_queue = checkQueue(pending_queries_.getNextTimeout());
+    if (!any_thing_in_queue) {
+        return nullptr;
+    }
     for (auto header = headers_.begin(); header != headers_.end(); ++header) {
         std::unique_ptr<std::string> body(rcvBody(header->mtype, header->size));
         if(body) {
@@ -43,8 +48,7 @@ std::unique_ptr<std::pair<Queue::MsgHeader, std::string>> ServerSink::recv() {
             return res;
         }
     }
-    std::unique_ptr<MsgHeader> new_header(
-        rcvHeader(pending_queries_.getNextTimeout()));
+    std::unique_ptr<MsgHeader> new_header(rcvHeader());
     if (new_header) {
         headers_.push_back(*new_header.release());
     }
@@ -80,21 +84,14 @@ void ServerSink::close() {
 }
 
 
-std::unique_ptr<Queue::MsgHeader> ServerSink::rcvHeader(unsigned timeout) {
+std::unique_ptr<Queue::MsgHeader> ServerSink::rcvHeader() {
     std::unique_ptr<MsgHeader> header(new MsgHeader);
-    alarm(timeout);
-    ssize_t res = msgrcv(msqid, header.get(), msgHeaderSize, 0, 0);
+    ssize_t res = msgrcv(msqid, header.get(), msgHeaderSize, 0, IPC_NOWAIT);
     int err = errno;
-    alarm(0); // cancel panding alarms
     if ( res != Queue::msgHeaderSize ) {
-        if((err == EINTR) && got_alarm_interrupt) {
-            header = nullptr;
-        } else {
             throw std::runtime_error("Failed to receive header: " +
-                                     std::to_string(err));
-        }
+                                     std::string(strerror(err)));
     }
-    got_alarm_interrupt = 0;
     return header;
 }
 
@@ -109,7 +106,7 @@ std::unique_ptr<std::string> ServerSink::rcvBody(pid_t pid, int size) {
             out = nullptr;
         } else {
             throw std::runtime_error("Failed to receive body: " +
-                                     std::to_string(err));
+                                     std::string(strerror(err)));
         }
     } else {
         out = std::unique_ptr<std::string>(new std::string(msg_body->body));
@@ -117,3 +114,25 @@ std::unique_ptr<std::string> ServerSink::rcvBody(pid_t pid, int size) {
     }
     return out;
 }
+
+bool ServerSink::checkQueue(unsigned timeout) {
+    bool out = false;
+    std::unique_ptr<MsgHeader> header(new MsgHeader);
+    alarm(timeout);
+    ssize_t res = msgrcv(msqid, header.get(), 0, 0, 0);
+    int err = errno;
+    alarm(0); // cancel panding alarms
+    if ( res != 0 ) {
+        if((err == EINTR) && got_alarm_interrupt) {
+            out = false;
+        } if (err == E2BIG) {
+            out = true;
+        } else {
+            throw std::runtime_error("Failed to check queue: " +
+                                     std::string(strerror(err)));
+        }
+    }
+    got_alarm_interrupt = 0;
+    return out;
+}
+

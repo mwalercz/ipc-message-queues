@@ -79,7 +79,7 @@ BOOST_AUTO_TEST_CASE(ServerSinkRcv) {
 
     std::vector<std::unique_ptr<Queue::MsgHeader>> output;
     for (std::size_t i = expected.size(); i--;) {
-        output.emplace_back(s.rcvHeader(1));
+        output.emplace_back(s.rcvHeader());
     }
 
     BOOST_REQUIRE(output[0] != nullptr);
@@ -111,7 +111,7 @@ BOOST_AUTO_TEST_CASE(ServerSinkRcvBody) {
 
     std::vector<std::unique_ptr<std::string>> output;
     for (pid_t i = 1; i < pid; ++i) {
-        std::unique_ptr<Queue::MsgHeader> h(s.rcvHeader(1));
+        std::unique_ptr<Queue::MsgHeader> h(s.rcvHeader());
         output.emplace_back(s.rcvBody(h->mtype, h->size));
     }
 
