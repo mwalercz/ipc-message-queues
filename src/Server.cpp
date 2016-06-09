@@ -5,6 +5,7 @@
 #include <stdexcept>
 #include <string>
 #include <fstream>
+#include <iostream>
 
 #include <sys/types.h>
 #include <sys/ipc.h>
