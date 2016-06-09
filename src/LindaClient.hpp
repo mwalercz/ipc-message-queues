@@ -36,8 +36,8 @@ private:
       queueOut->connect();
   }
 
-  std::string sendAndRcv(const std::string&  prefix, const std::string& query, timeval tv) {
-    queueOut->clientSend(prefix + query, tv.tv_sec*1000+tv.tv_usec/1000);
+  std::string sendAndRcv(const std::string&  prefix, const std::string& query, unsigned timeout) {
+    queueOut->clientSend(prefix + query, timeout);
     return queueIn->clientRcv();
   }
 
@@ -45,11 +45,11 @@ private:
 public:
   LindaClient(const std::string& path) {init(path);}
 
-  std::string input(const std::string& query, timeval tv) {
-    return sendAndRcv("input ", query, tv);
+  std::string input(const std::string& query, unsigned timeout) {
+    return sendAndRcv("input ", query, timeout);
   }
-  std::string read(const std::string& query, timeval tv) {
-    return sendAndRcv("read ", query, tv);
+  std::string read(const std::string& query, unsigned timeout) {
+    return sendAndRcv("read ", query, timeout);
   }
   void output(const std::string& tuple) {
     queueOut->clientSend("output " + tuple, Queue::timeout);

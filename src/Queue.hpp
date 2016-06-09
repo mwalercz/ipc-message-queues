@@ -12,10 +12,10 @@ public:
     long mtype;
     int size;
     int time;
-    int timeout;
+    unsigned timeout;
   };
 protected:
-  static const int msgHeaderSize = 3*sizeof(int);
+  static const int msgHeaderSize = 2*sizeof(int)+sizeof(unsigned);
 
 
   struct MsgBody {
@@ -23,7 +23,7 @@ protected:
     char body[0];
   };
 
-  void sendHeader(pid_t pid, int size, int time, int timeout);
+  void sendHeader(pid_t pid, int size, int time, unsigned timeout);
 
   //Message queue id
   int msqid;
@@ -51,9 +51,9 @@ public:
   //Connects to queue (client)
   void connect();
 
-  void send(pid_t pid, const std::string &str, int timeout=0);
+  void send(pid_t pid, const std::string &str, unsigned timeout=0);
 
-  void clientSend(const std::string &str,int timeout=timeout) {send(pid,str,timeout);}
+  void clientSend(const std::string &str,unsigned timeout=timeout) {send(pid,str,timeout);}
 
   void sendErrorInfo(pid_t pid, Error err) {
     sendHeader(pid,0,time(0),err);

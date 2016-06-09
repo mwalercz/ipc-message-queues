@@ -36,14 +36,14 @@ BOOST_AUTO_TEST_CASE(LindaClientRead) {
  LindaClient client("./test_keys");
 
  //initialize timeval
- timeval tv;
- tv.tv_sec=0;
- tv.tv_usec = 0;
+ // timeval tv;
+ // tv.tv_sec=0;
+ // tv.tv_usec = 0;
 
  std::string query = "THERE BE QUERIES";
  //Put dummy server response into in queue
  qIn.clientSend("Dummy response", 0);
- client.read(query,tv);
+ client.read(query,0);
 
 
  //check what will server receive
@@ -67,14 +67,14 @@ BOOST_AUTO_TEST_CASE(LindaClientInput) {
  LindaClient client("./test_keys");
 
  //initialize timeval
- timeval tv;
- tv.tv_sec=0;
- tv.tv_usec = 0;
+ // timeval tv;
+ // tv.tv_sec=0;
+ // tv.tv_usec = 0;
 
  std::string query = "THERE BE QUERIES";
  //Put dummy server response into in queue
  qIn.clientSend("Dummy response", Queue::Error::kOk);
- client.input(query,tv);
+ client.input(query,0);
 
  //check what will server receive
 
@@ -127,16 +127,16 @@ BOOST_AUTO_TEST_CASE(LindaClientTimeout) {
  LindaClient client("./test_keys");
 
  //initialize timeval
- timeval tv;
- tv.tv_sec=0;
- tv.tv_usec = 0;
+ // timeval tv;
+ // tv.tv_sec=0;
+ // tv.tv_usec = 0;
 
  std::string query = "THERE BE QUERIES";
  //Put dummy server response into in queue
  qIn.clientSend("Dummy response", Queue::Error::kTimeout);
 
  //check what will client receive (timeout)
- std::string testStr =  client.input(query,tv);
+ std::string testStr =  client.input(query,0);
 
 
  qOut.clientRcv();

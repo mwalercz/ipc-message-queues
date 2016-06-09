@@ -21,7 +21,7 @@ void Queue::connect() {
   }
 }
 
-void Queue::sendHeader(pid_t pid, int size, int time, int timeout) {
+void Queue::sendHeader(pid_t pid, int size, int time, unsigned timeout) {
   MsgHeader msg;
   msg.mtype = pid;
   msg.size = size;
@@ -33,7 +33,7 @@ void Queue::sendHeader(pid_t pid, int size, int time, int timeout) {
 }
 
 
-void Queue::send(pid_t pid, const std::string &str, int timeout) {
+void Queue::send(pid_t pid, const std::string &str, unsigned timeout) {
   int msgSize = str.size() + 1; //null terminated C string (+1)
   sendHeader(pid,
          msgSize,

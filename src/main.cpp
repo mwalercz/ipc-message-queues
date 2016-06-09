@@ -13,15 +13,12 @@ static const int n = 10;
 void autoconsumer() {
     sleep(1);
     LindaClient client("/tmp/queues_keys");
-    timeval tv;
-    tv.tv_sec = 0;
-    tv.tv_usec = 0;
     while(1) {
         int dt = rand() % 3;
         sleep(dt);
         client.output(std::to_string(getpid()));
-        client.read("integer:="+std::to_string(getpid()), tv);
-        client.input("integer:="+std::to_string(getpid()), tv);
+        client.read("integer:="+std::to_string(getpid()), 0);
+        client.input("integer:="+std::to_string(getpid()), 0);
     }
 }
 
