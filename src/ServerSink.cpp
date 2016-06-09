@@ -125,7 +125,7 @@ bool ServerSink::checkQueue(unsigned timeout) {
     if ( res != 0 ) {
         if((err == EINTR) && got_alarm_interrupt) {
             out = false;
-        } if (err == E2BIG) {
+        } else if (err == E2BIG) {
             out = true;
         } else {
             throw std::runtime_error("Failed to check queue: " +
