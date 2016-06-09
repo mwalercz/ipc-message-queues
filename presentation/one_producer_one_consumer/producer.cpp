@@ -12,5 +12,5 @@ int main() {
 
     std::string tupleExpected = "1, 3.1, \"linda\"";
     client.output(tupleExpected);
-    std::cout << "Sent tuple: " << tupleExpected;
+    std::cout << "Sent tuple: " << tupleExpected + "\n";
 }

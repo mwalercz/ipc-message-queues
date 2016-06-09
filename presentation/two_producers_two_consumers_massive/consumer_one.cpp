@@ -11,7 +11,7 @@ int main() {
     LindaClient client(keysFileName);
 
     for(int i = 0; i < 100; i++) {
-        std::string query = "integer:=*, float:*., string:*";
+        std::string query = "integer:*, float:*, string:*";
         std::cout << "Expecting: " << query << "\n";
         std::string tuple = client.input(query, getTimeval());
         std::cout << "Received: " << tuple << "\n";

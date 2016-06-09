@@ -13,7 +13,7 @@ int main() {
     for (int i = 0; i < 100; ++i) {
         std::string tuple = "\"Ala ma kota.\", 5., 8";
         client.output(tuple);
-        std::cout << "Sent tuple: " << tuple;
+        std::cout << "Sent tuple: " << tuple+ "\n";
     }
 
 }
