@@ -55,6 +55,11 @@ class ServerSink : public Queue {
      */
     std::unique_ptr<std::string> rcvBody(pid_t pid, int size);
 
+    /** waits for anything in queue
+     *  return false if timeouted
+     */
+    bool checkQueue();
+
     /** SIGALRM handler */
     static void sig_alarm_handler(int signo);
     /** reference to pending querries, to get next timeout */

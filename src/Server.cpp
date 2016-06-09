@@ -33,12 +33,17 @@ Server::Server(const std::string& keys_filename)
 
 void Server::serve() {
      while (running) {
+         std::cout << "*" << std::endl;
          std::vector<MsgPid> timeouted = pending_queries_.removeTimedoutQueries();
          for (auto pid : timeouted) {
+            std::cout << "[TIMEOUT] Removing timeouted query. Owner's PID: " << pid << std::endl;
             queue_out_->sendTimeout(pid);
          }
          std::unique_ptr<std::pair<Queue::MsgHeader, std::string>> raw_data;
+         std::cout << "Receiving data...";
+         std::cout.flush();
          raw_data = queue_in_->recv();
+         std::cout << "done."  << std::endl;
          if (raw_data) {
              Queue::MsgHeader header = raw_data->first;
              std::string raw_string = raw_data->second;
@@ -49,18 +54,19 @@ void Server::serve() {
                  msg->accept(*this);
              } catch (std::runtime_error& e) {
                 queue_out_->sendParseError(header.mtype);
+                std::cout << "[PARSE_ERROR] Parse errorm. Owner's PID: " << header.mtype << std::endl;
              }
-         } else {
-             throw std::runtime_error("Parser returned nullptr");
          }
-    }
+     }
 }
 
 void Server::visit(Output& output) {
+    std::cout << "[OUTPUT] Handling output. Owner's PID: " << output.getPid() << std::endl;
     handleOutput(output);
 }
 
 void Server::visit(Query& query) {
+    std::cout << "[QUERY] Handling query. Owner's PID: " << query.getPid() << std::endl;
     handleQuery(query);
 }
 
