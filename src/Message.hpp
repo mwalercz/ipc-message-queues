@@ -10,7 +10,7 @@
 
 typedef int Length;
 typedef time_t Time;
-typedef double TimeDuration;
+typedef unsigned TimeDuration;
 typedef unsigned MsgPid;
 
 class Output;
