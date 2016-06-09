@@ -9,6 +9,7 @@ add_library(LindaClient
         ${SRC}/LindaClient.hpp
         ${SRC}/Queue.cpp
         ${SRC}/Queue.hpp
+        constants.hpp
         )
 
 add_subdirectory(one_producer_one_consumer)

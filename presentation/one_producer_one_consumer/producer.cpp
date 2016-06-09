@@ -4,10 +4,11 @@
 
 #include <iostream>
 #include "LindaClient.hpp"
+#include "../constants.hpp"
 
 int main() {
     std::cout << "Producer\n";
-    LindaClient client("/tmp/queues_keys");
+    LindaClient client(keysFileName);
 
     std::string tupleExpected = "1, 3.1, \"linda\"";
     client.output(tupleExpected);

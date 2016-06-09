@@ -37,7 +37,7 @@ private:
 
 public:
   static const std::vector<std::string> errorMessages;
-  const static int timeout = 500; //ms?
+  const static int timeout = 10000; //ms?
   enum Error {
     kNone=0,
     kTimeout=1,

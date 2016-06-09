@@ -3,17 +3,17 @@
 //
 #include <iostream>
 #include "LindaClient.hpp"
+#include "../constants.hpp"
+
 int main() {
     std::cout << "Consumer\n";
 
-    LindaClient client("/tmp/queues_keys");
-    timeval tv;
-    tv.tv_sec = 1;
-    tv.tv_usec = 0;
+    LindaClient client(keysFileName);
+
     for(int i = 0; i < 100; i++) {
         std::string query = "integer:=*, float:*., string:*";
         std::cout << "Expecting: " << query << "\n";
-        std::string tuple = client.input(query, tv);
+        std::string tuple = client.input(query, getTimeval());
         std::cout << "Received: " << tuple << "\n";
     }
 }
