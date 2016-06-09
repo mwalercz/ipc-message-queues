@@ -52,7 +52,7 @@ void Server::serve() {
                      parser_.parse(raw_string, header.time, header.timeout,
                                    static_cast<unsigned>(header.mtype));
                  msg->accept(*this);
-             } catch (std::runtime_error& e) {
+             } catch (std::domain_error& e) {
                 queue_out_->sendParseError(header.mtype);
                 std::cout << "[PARSE_ERROR] Parse errorm. Owner's PID: " << header.mtype << std::endl;
              }

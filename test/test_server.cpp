@@ -14,7 +14,7 @@ BOOST_AUTO_TEST_SUITE(test_server)
 
 BOOST_AUTO_TEST_CASE( TestServerServe ) {
    Server server("srv_test_keys");
-   server.serve();
+//   server.serve();
 }
 
 BOOST_AUTO_TEST_SUITE_END()
