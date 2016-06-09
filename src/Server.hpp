@@ -23,6 +23,9 @@ public:
 
     void serve();
 
+    static void sigint_handler(int signo);
+
+    static sig_atomic_t running;
 private:
     void handleQuery(const Query& query);
     void handleOutput(const Output& output);
