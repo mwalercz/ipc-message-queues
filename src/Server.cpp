@@ -16,7 +16,7 @@
 #include "./parser/Parser.h"
 #include "ServerSink.hpp"
 
-sig_atomic_t Server::running = 1;
+volatile sig_atomic_t Server::running = 1;
 void Server::sigint_handler(int signo) {
     Server::running = 0;
 }
