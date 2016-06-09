@@ -1,20 +1,24 @@
 #include <iostream>
 #include <vector>
-#include "unistd.h"
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 #include "Server.hpp"
 #include "LindaClient.hpp"
 
-static const int n = 100;
+static const int n = 10;
 
 
 void autoconsumer() {
-    sleep(5);
+    sleep(1);
     LindaClient client("/tmp/queues_keys");
     timeval tv;
     tv.tv_sec = 0;
     tv.tv_usec = 0;
     while(1) {
+        int dt = rand() % 3;
+        sleep(dt);
         client.output(std::to_string(getpid()));
         client.read("integer:="+std::to_string(getpid()), tv);
         client.input("integer:="+std::to_string(getpid()), tv);
@@ -31,7 +35,7 @@ int main() {
             return 0;
         }
         pids.push_back(pid);
-        std::cout << i << " started.\r\t";
+        std::cout << i+1 << " started.\r\t";
     }
     std::cout << "\nStarting server... ";
     try {
@@ -40,9 +44,12 @@ int main() {
         server.serve();
     } catch(std::exception& e) {
         std::cout << "abort: " << e.what() << std::endl;
-        std::cout << "kill -9";
-        for(int i : pids) {
+        // prints a command to be copied and executed if user wish
+        for(pid_t i : pids) {
             std::cout << " " << i;
+            kill(i, SIGKILL);
+            int status;
+            wait(&status);
         }
         std::cout << std::endl;
         return 1;
