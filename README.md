@@ -19,6 +19,7 @@ Interpretacja
 -------------
 Końcowy użytkownik biblioteki klienta będzie korzystał z języka C++, natomiast metody, które będzie wywoływał będą przypominały język Linda (w granicach narzuconych przez C++). Dlatego propozycja API:
 
+```
 class LindaClient {
 public:
 	void init(const std::string& path_to_key);
@@ -27,21 +28,22 @@ public:
 	void output(const std::string tuple);
 	void close();
 };
+```
 gdzie:
 path_to_key - ścieżka do pliku w którym znajdują się klucze identyfikujące kolejki komunikatów (wyjaśnione przy serwerze)
-query - wzorzec krotki w języku Linda, który będzie wyszukiwany w przestrzeni krotek, np. “integer:1, string:*”
-tuple - krotka w języku Linda, która będzie wpisana do przestrzeni krotek, np.
-	“1, \“abc\”, 2.12”
-napisy zwracane w metodach read i input będą miały format analogiczny do tuple (dla zachowania symetryczności operacji read, input/output), np. “2, \“ijk\”, 5”
+query - wzorzec krotki w języku Linda, który będzie wyszukiwany w przestrzeni krotek, np. `“integer:1, string:*”`
+tuple - krotka w języku Linda, która będzie wpisana do przestrzeni krotek, np. `“1, \“abc\”, 2.12”`
+napisy zwracane w metodach read i input będą miały format analogiczny do tuple (dla zachowania symetryczności operacji read, input/output), np. `“2, \“ijk\”, 5”`
 Klient może operować na krotkach o liczbie elementów nie większej niż 32
 Przykład kodu
+```
 LindaClient clientA;
 clientA.init(“path/to/key”)
 clientA.output(“1, 2, 4.127”)
 std::string tuple_read = clientA.read(“int:*, int:>1, float:*”)
 clientA.close()
-
-Po takich operacjach, jeśli clientA jest jedynym klientem, to w tuple_read zostanie wpisany napis “1, 2, 4.127”
+```
+Po takich operacjach, jeśli clientA jest jedynym klientem, to w tuple_read zostanie wpisany napis `“1, 2, 4.127”`
 
 Architektura
 ------------
